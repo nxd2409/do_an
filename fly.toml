@@ -1,0 +1,85 @@
+# fly.io deployment configuration
+# Documentation: https://fly.io/docs/
+
+app = "project-api"  # Change this to your app name
+primary_region = "sgn"  # Singapore
+
+[build]
+  # Using the Dockerfile in the repo root
+  dockerfile = "Dockerfile"
+
+[env]
+  # ASP.NET Core
+  ASPNETCORE_ENVIRONMENT = "Production"
+  ASPNETCORE_URLS = "http://0.0.0.0:8080"
+
+[[services]]
+  internal_port = 8080
+  protocol = "tcp"
+  
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+  
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+    force_https = true  # Redirect HTTP to HTTPS
+  
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+    tls = {}  # Use Fly.io's automatic TLS
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+[env]
+  # Database
+  DB_SERVER = ""  # Set this via secrets or manually
+  DB_USER = "sa"
+  DB_NAME = "DO_AN"
+  DB_HANGFIRE_NAME = "DO_AN_HANGFIRE"
+  
+  # JWT
+  JWT_KEY = ""  # Set this via secrets
+  API_URL = "https://project-api.fly.dev"  # Change to your domain
+  FRONTEND_URL = "https://your-frontend-domain.vercel.app"
+  
+  # MinIO
+  MINIO_ENDPOINT = ""  # Set this manually
+  MINIO_ACCESS_KEY = ""  # Set via secrets
+  MINIO_SECRET_KEY = ""  # Set via secrets
+  
+  # Redis disabled - using MemoryCache instead
+  REDIS_ENABLED = "false"
+
+# Health check
+[checks]
+  [checks.http]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    path = "/health"
+    protocol = "http"
+    timeout = "5s"
+    tls_skip_verify = false
+
+# Scaling configuration
+[[vm]]
+  size = "shared-cpu-2x"  # shared-cpu-1x, shared-cpu-2x (free tier)
+  memory_mb = 512  # 512MB for shared-cpu-1x, 1024MB for shared-cpu-2x
+  count = 1  # Number of machines
+
+# Processes
+[processes]
+  app = ""  # Use default start command from Dockerfile
+
+# Monitoring
+[logging]
+  driver = "sumolog"  # Optional: integrate with external logging
