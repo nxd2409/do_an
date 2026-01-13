@@ -1,0 +1,59 @@
+services:
+  - type: web
+    name: project-api
+    env: docker
+    repo: https://github.com/YOUR_USERNAME/do_an
+    dockerfilePath: ./Dockerfile
+    region: singapore
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ASPNETCORE_URLS
+        value: http://+:5000
+      - key: DB_SERVER
+        fromDatabase:
+          name: project-db
+          property: host
+      - key: DB_NAME
+        value: DO_AN
+      - key: DB_USER
+        fromDatabase:
+          name: project-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: project-db
+          property: password
+      - key: DB_HANGFIRE_NAME
+        value: DO_AN_HANGFIRE
+      - key: REDIS_URL
+        fromService:
+          name: project-redis
+          property: connectionString
+      - key: JWT_KEY
+        sync: false
+      - key: API_URL
+        value: https://project-api.onrender.com
+      - key: FRONTEND_URL
+        value: https://your-frontend-domain.vercel.app
+      - key: MINIO_ENDPOINT
+        value: your-minio-endpoint.com
+      - key: MINIO_ACCESS_KEY
+        sync: false
+      - key: MINIO_SECRET_KEY
+        sync: false
+
+  - type: pserv
+    name: project-db
+    env: postgres
+    plan: free
+    region: singapore
+    ipAllowList: []
+
+  - type: redis
+    name: project-redis
+    region: singapore
+    plan: free
+    ipAllowList: []

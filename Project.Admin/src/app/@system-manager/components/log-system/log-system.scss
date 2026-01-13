@@ -1,0 +1,144 @@
+.log-container {
+    height: calc(100vh - 116px);
+    background: #262626;
+    padding: 12px;
+    border-radius: 2px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 12px;
+}
+
+.log-line {
+    display: flex;
+    align-items: flex-start;
+    line-height: 28px;
+    padding: 2px 0;
+    border-bottom: 1px solid #333;
+
+    &:hover {
+        background-color: #333;
+    }
+}
+
+.timestamp {
+    color: #90a4ae;
+    margin-right: 8px;
+    font-weight: 500;
+    min-width: 180px;
+    flex-shrink: 0;
+}
+
+.level {
+    font-weight: bold;
+    margin-right: 8px;
+    min-width: 60px;
+    flex-shrink: 0;
+}
+
+.logger {
+    color: #81c784;
+    margin-right: 8px;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.message {
+    white-space: pre-wrap;
+    color: #e0e0e0;
+    font-weight: 400;
+    flex: 1;
+    word-break: break-word;
+}
+
+.properties {
+    color: #ffb74d;
+    font-style: italic;
+    opacity: 0.8;
+}
+
+// Level-specific colors
+.INF {
+    .level {
+        color: #61AFFE;
+    }
+}
+
+.ERR {
+    .level {
+        color: #f44336;
+    }
+    .message {
+        color: #ffcdd2;
+    }
+}
+
+.WRN {
+    .level {
+        color: #ffc107;
+    }
+    .message {
+        color: #fff3c4;
+    }
+}
+
+.DBG {
+    .level {
+        color: #9c27b0;
+    }
+    .message {
+        color: #e1bee7;
+    }
+}
+
+.TRC {
+    .level {
+        color: #607d8b;
+    }
+    .message {
+        color: #b0bec5;
+    }
+}
+
+.FAT {
+    .level {
+        color: #e91e63;
+        font-weight: 900;
+        animation: blink 1s infinite;
+    }
+    .message {
+        color: #f8bbd9;
+        font-weight: 600;
+    }
+}
+
+.TXT {
+    .level {
+        color: #90a4ae;
+    }
+    .message {
+        color: #aaa;
+    }
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.5; }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+    .log-line {
+        flex-direction: column;
+        line-height: 20px;
+    }
+    
+    .timestamp, .level, .logger {
+        margin-bottom: 4px;
+    }
+    
+    .logger {
+        max-width: 100%;
+    }
+}

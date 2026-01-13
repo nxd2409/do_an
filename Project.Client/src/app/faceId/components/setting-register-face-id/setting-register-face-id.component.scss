@@ -1,0 +1,223 @@
+.camera-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border-radius: 2px;
+  padding: 10px;
+  // box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-top: 10px;
+}
+
+.camera-box {
+  width: 100%;
+  max-width: 440px; // tùy modal
+  aspect-ratio: 4 / 3; // khung 4:3 chuẩn camera
+  background: #000;
+  border-radius: 2px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  webcam {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; // fill toàn bộ khung, không bị lệch
+  }
+}
+
+.camera-controls {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+
+  .btn-capture {
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: none;
+    background: #ff4444;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s ease;
+
+    &:hover {
+      background: #ff2222;
+      transform: scale(1.05);
+    }
+  }
+}
+
+.camera-instruction {
+  margin-top: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.preview-list {
+  margin-top: 20px;
+  display: flex;
+  gap: 12px;
+  max-width: 440px !important;
+  overflow-x: auto !important;
+
+  .preview-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    img {
+      width: 145px !important;
+      height: auto;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid #ddd;
+    }
+
+    p {
+      margin-top: 4px;
+      font-size: 12px;
+      color: #555;
+    }
+  }
+}
+
+.custom-close-icon{
+    position: absolute !important;
+    right: 100px;
+    bottom: 488px;
+    font-size: 19px;
+}
+
+.position-absolute{
+  position: absolute;
+}
+
+.position-relative{
+  position: relative;
+}
+
+.preview-item-image-close{
+  right: -5px !important;
+  top: -6px !important;
+}
+
+.process-active{
+  background-color: var(--bs-picton-blue) !important;
+}
+
+.process-unactive{
+  background-color: #dcdee2 !important;
+}
+
+.process-border-left{
+  border-radius: 10px 0 0 10px !important;
+}
+
+.process-border-right{
+  border-radius: 0 10px 10px 0 !important;
+}
+
+.bg-color-step-custom{
+    background-color: rgb(239 246 255) !important;
+}
+
+.process-bg-color-active{
+  background-color: #86fbb0 !important;
+}
+
+.overlay-text {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: red;
+  font-size: 20px;
+  font-weight: bold;
+  width: 300px;
+  text-align: center;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.bg-color-custom{
+    background-color: rgb(239 246 255) !important;
+}
+
+.show-msg-error {
+  color: red;
+  font-size: 20px;
+  font-weight: bold;
+  animation: blink 1s infinite;
+}
+
+// Hiệu ứng chạy sọc
+.process-animation {
+  background-color: var(--bs-picton-blue) !important;
+  animation: blink_process 1s infinite;
+}
+
+@keyframes blink_process {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7; /* giảm độ sáng, kiểu tắt */
+  }
+}
+
+.btn-cancel{
+    border: 1px solid var(--bs-grey-light) !important;
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Spinner */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.countdown-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  
+  .countdown-number {
+    font-size: 80px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    animation: pulse 1s ease-in-out;
+  }
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.8); opacity: 0; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}

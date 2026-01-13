@@ -1,0 +1,22 @@
+.item-menu {
+    display: flex;
+    align-items: center;
+    padding: 2px 6px 4px 2px;
+}
+
+.tree-org{
+    // padding-right: 16px;
+    height: calc(100vh - 168px);
+    overflow-y: auto;
+}
+.list-account-group{
+    padding-left: 16px;
+}
+
+.info-account-group{
+    padding-right: 16px;
+}
+
+.right-account-group{
+    padding-left: 16px;
+}

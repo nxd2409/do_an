@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excalidraw</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+        }
+
+        #root {
+            width: 100vw;
+            height: 100dvh;
+        }
+
+        #loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100dvh;
+            font-family: Arial;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loading">Loading Excalidraw...</div>
+    <div id="root"></div>
+
+    <script src="react.production.min.js"></script>
+    <script src="react-dom.production.min.js"></script>
+    <script src="excalidraw.production.min.js"></script>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', function () {
+            setTimeout(function () {
+                document.getElementById('loading').style.display = 'none';
+
+                if (!window.React || !window.ReactDOM || !window.ExcalidrawLib) {
+                    document.getElementById('root').innerHTML =
+                        '<div style="padding:20px;color:red;">Error: Cannot load Excalidraw libraries</div>';
+                    return;
+                }
+
+                const React = window.React;
+                const ReactDOM = window.ReactDOM;
+                const { Excalidraw } = window.ExcalidrawLib;
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const roomId = urlParams.get('room') || 'default-room';
+                const WS_URL = `wss://sso.d2s.com.vn:6654?room=${roomId}`;
+
+                function App() {
+                    const [excalidrawAPI, setExcalidrawAPI] = React.useState(null);
+                    const wsRef = React.useRef(null);
+                    const isRemoteChange = React.useRef(false);
+                    const initialLoadDone = React.useRef(false);
+
+                    React.useEffect(function () {
+                        if (!excalidrawAPI) return;
+
+                        setTimeout(function () {
+                            excalidrawAPI.setActiveTool({ type: 'freedraw' });
+                        }, 200);
+                    }, [excalidrawAPI]);
+
+                    React.useEffect(function () {
+                        if (!excalidrawAPI) return;
+
+                        const ws = new WebSocket(WS_URL);
+                        wsRef.current = ws;
+
+                        ws.onopen = function () {
+                        };
+
+                        ws.onmessage = function (event) {
+                            try {
+                                const data = JSON.parse(event.data);
+
+                                if (data.type === 'INITIAL_SCENE') {
+                                    isRemoteChange.current = true;
+                                    excalidrawAPI.updateScene({
+                                        elements: data.elements || [],
+                                        appState: data.appState || {}
+                                    });
+                                    initialLoadDone.current = true;
+                                }
+                                else if (data.type === 'SCENE_UPDATE') {
+                                    isRemoteChange.current = true;
+                                    excalidrawAPI.updateScene({
+                                        elements: data.elements || [],
+                                        appState: data.appState || {}
+                                    });
+                                }
+                            } catch (error) {
+                                console.error('Error processing message:', error);
+                            }
+                        };
+
+                        ws.onerror = function (error) {
+                            console.error('WebSocket error:', error);
+                        };
+
+                        ws.onclose = function () {
+                        };
+
+                        let timeout;
+                        excalidrawAPI.onChange(function (elements, appState) {
+                            if (isRemoteChange.current) {
+                                isRemoteChange.current = false;
+                                return;
+                            }
+
+                            clearTimeout(timeout);
+                            timeout = setTimeout(function () {
+                                if (ws.readyState === WebSocket.OPEN) {
+                                    ws.send(JSON.stringify({
+                                        type: 'SCENE_UPDATE',
+                                        elements: elements,
+                                        appState: {
+                                            viewBackgroundColor: appState.viewBackgroundColor,
+                                            currentItemFontFamily: appState.currentItemFontFamily,
+                                            gridSize: appState.gridSize
+                                        }
+                                    }));
+                                }
+                            }, 100);
+                        });
+
+                        return function () {
+                            clearTimeout(timeout);
+                            if (ws.readyState === WebSocket.OPEN) {
+                                ws.close();
+                            }
+                        };
+                    }, [excalidrawAPI]);
+
+                    React.useEffect(function () {
+                        if (!excalidrawAPI) return;
+
+                        setTimeout(function () {
+                            if (!initialLoadDone.current) {
+                                const dataParam = urlParams.get('data');
+                                if (dataParam) {
+                                    try {
+                                        const sceneData = JSON.parse(decodeURIComponent(dataParam));
+                                        excalidrawAPI.updateScene(sceneData);
+                                    } catch (error) {
+                                        console.error('Error loading scene data:', error);
+                                    }
+                                }
+                            }
+                        }, 500);
+                    }, [excalidrawAPI]);
+
+                    React.useEffect(function () {
+                        function handleMessage(event) {
+                            if (!excalidrawAPI) return;
+
+                            if (event.data.type === 'GET_SCENE_DATA') {
+                                const elements = excalidrawAPI.getSceneElements();
+                                const appState = excalidrawAPI.getAppState();
+
+                                window.parent.postMessage({
+                                    type: 'SCENE_DATA',
+                                    data: {
+                                        elements: elements,
+                                        appState: {
+                                            viewBackgroundColor: appState.viewBackgroundColor,
+                                            gridSize: appState.gridSize
+                                        }
+                                    }
+                                }, '*');
+                            }
+
+                            if (event.data.type === 'LOAD_SCENE_DATA') {
+                                try {
+                                    excalidrawAPI.updateScene(event.data.data);
+                                } catch (error) {
+                                    console.error('Error loading scene:', error);
+                                }
+                            }
+                        }
+
+                        window.addEventListener('message', handleMessage);
+                        return function () {
+                            window.removeEventListener('message', handleMessage);
+                        };
+                    }, [excalidrawAPI]);
+
+                    return React.createElement(Excalidraw, {
+                        excalidrawAPI: function (api) {
+                            setExcalidrawAPI(api);
+                        }
+                    });
+                }
+
+                const root = ReactDOM.createRoot(document.getElementById('root'));
+                root.render(React.createElement(App));
+            }, 100);
+        });
+    </script>
+</body>
+
+</html>

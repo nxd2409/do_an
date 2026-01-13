@@ -1,0 +1,242 @@
+// Variables
+$primary-color: #378dd8;
+$secondary-color: #b47db4;
+$guest-btn-color: #3d3d3d;
+$success-color: #10b981;
+$text-gray: #605e5c;
+$border-gray: #e1dfdd;
+$bg-color: white;
+
+$container-max-width: 400px;
+$mobile-padding: 16px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 24px;
+$spacing-xl: 36px;
+
+// Mixins
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+// Main Container
+.main-login {
+    background: $bg-color url("/img/login-bg.svg") no-repeat center/cover;
+    height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 80px 32px $spacing-lg;
+    overflow-x: hidden;
+
+    @media (max-width: 480px) {
+        padding: 40px 16px $spacing-md;
+        min-height: 100dvh;
+    }
+}
+
+// Login Container
+.login-container {
+    width: 100%;
+    max-width: $container-max-width;
+    margin: 0 auto;
+}
+
+.content-login {
+    width: 100%;
+}
+
+// Header
+.header-login {
+    text-align: center;
+    margin-bottom: $spacing-lg;
+}
+
+.x-meet {
+    font-size: clamp(28px, 8vw, 36px);
+    font-weight: 600;
+}
+
+.name-system-login {
+    font-size: clamp(14px, 4vw, 18px);
+    font-weight: 600;
+    margin-top: $spacing-sm;
+}
+
+// Form
+.login-form {
+    width: 100%;
+
+    nz-form-item {
+        margin-bottom: $spacing-md;
+    }
+}
+
+.forgot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-md;
+    font-size: 14px;
+
+    label {
+        font-weight: 600;
+        margin: 0;
+    }
+}
+
+.login-form-forgot {
+    color: $primary-color;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.password-toggle {
+    cursor: pointer;
+}
+
+// Buttons
+.btn-primary,
+.btn-secondary,
+.btn-guest {
+    width: 100%;
+    margin-bottom: $spacing-md;
+}
+
+.btn-guest {
+    background-color: $guest-btn-color !important;
+    border-color: $guest-btn-color !important;
+}
+
+// Divider
+.divider {
+    @include flex-center;
+    margin: $spacing-lg 0;
+    color: $text-gray;
+    font-size: 14px;
+
+    &::before,
+    &::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background-color: $border-gray;
+    }
+
+    &::before {
+        margin-right: 16px;
+    }
+
+    &::after {
+        margin-left: 16px;
+    }
+}
+
+// Face Recognition
+.face-recognition-container {
+    position: relative;
+    width: min(260px, 70vw);
+    height: min(260px, 70vw);
+    margin: $spacing-xl auto;
+
+    video {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        position: relative;
+        z-index: 1;
+        transform: scaleX(-1);
+    }
+}
+
+.recognition-ring {
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    z-index: 2;
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: -4px;
+        border-radius: 50%;
+        border: 1px solid #dedede;
+        opacity: 0.3;
+    }
+}
+
+// Footer
+.footer-login {
+    @include flex-center;
+    flex-direction: column;
+    gap: $spacing-sm;
+    padding: $spacing-md;
+}
+
+.footer-logo {
+    width: min(160px, 40vw);
+    height: auto;
+}
+
+.copyright {
+    font-size: 13px;
+    text-align: center;
+
+    @media (min-width: 768px) {
+        font-size: 14px;
+    }
+}
+
+.copyright-title {
+    color: gray;
+    margin-right: 4px;
+}
+
+// Animations
+@keyframes gradientMove {
+    0% {
+        background-position: 0% center;
+    }
+
+    100% {
+        background-position: 200% center;
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.3;
+    }
+
+    50% {
+        transform: scale(1.05);
+        opacity: 0.6;
+    }
+}
+
+// Responsive adjustments
+@media (max-width: 480px) {
+    .main-login {
+        padding: 60px 32px $spacing-md;
+    }
+
+    .forgot {
+        flex-direction: column;
+        gap: $spacing-sm;
+        align-items: flex-start;
+    }
+
+    .login-form-forgot {
+        align-self: flex-end;
+    }
+}

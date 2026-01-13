@@ -1,0 +1,215 @@
+<div class="main-login" (click)="handleScreenClick($event)">
+    <div *ngIf="!isViewLogin" class="title">HỆ THỐNG PHÒNG HỌP THÔNG MINH</div>
+    <!-- Tech Background Elements -->
+    <div class="tech-background">
+        <div class="geometric-elements">
+            
+            <!-- Circuit lines -->
+            <div class="circuit-lines">
+                <div class="line horizontal line-1"></div>
+                <div class="line horizontal line-2"></div>
+                <div class="line horizontal line-3"></div>
+                <div class="line vertical line-4"></div>
+                <div class="line vertical line-5"></div>
+            </div>
+
+            <!-- Connection nodes -->
+            <div class="connection-nodes">
+                <div class="node node-1"></div>
+                <div class="node node-2"></div>
+                <div class="node node-3"></div>
+                <div class="node node-4"></div>
+                <div class="node node-5"></div>
+                <div class="node node-6"></div>
+            </div>
+
+            <!-- Gears -->
+            <div class="gears">
+                <div class="gear gear-1">
+                    <div class="gear-inner"></div>
+                </div>
+                <div class="gear gear-2">
+                    <div class="gear-inner"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if(!isMobileTablet) {
+    <div class="landing-content">
+        <div class="introduce-featureBox">
+
+            <div class="feature-box">
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="label label-top-left">Bảo mật cao</div>
+                <div class="label label-bottom-left">Chia sẻ màn hình</div>
+                <div class="label label-bottom-right">Chất lượng HD</div>
+            </div>
+
+            <div class="introduce">
+                <nz-carousel nzAutoPlay [nzEffect]="effect" [nzLoop]="true">
+                    <div *ngFor="let item of introduce" nz-carousel-content>
+                        <div class="content-wrapper">
+                            <h3 class="title">{{ item.title }}</h3>
+                            <p class="sub-title">{{ item.subTitle }}</p>
+                        </div>
+                    </div>
+                </nz-carousel>
+            </div>
+        </div>
+
+        <div class="landing-right-section">
+            <div class="content-landing">
+                <nz-timeline nzMode="custom">
+                    <nz-timeline-item nzPosition="right" [nzDot]="OnlineMeeting">
+                        <div style="height: 132px">
+                            <div class="item OnlineMeeting">
+                                <h3 class="title-item">Online meeting</h3>
+                                <h4 class="sub-title-item">
+                                    Hỗ trợ cuộc họp trực tuyến với chất lượng HD, chia sẻ màn hình và ghi âm tự động,...
+                                </h4>
+                            </div>
+                        </div>
+                    </nz-timeline-item>
+                    <nz-timeline-item nzPosition="left" [nzDot]="QuanLyVanBan">
+                        <div style="height: 132px">
+                            <div class="item QuanLyVanBan">
+                                <h3 class="title-item">Quản lý văn bản</h3>
+                                <h4 class="sub-title-item">
+                                    Tổ chức, lưu trữ, phân phối và theo dõi các loại văn bản có liên quan đến cuộc họp.
+                                </h4>
+                            </div>
+                        </div>
+                    </nz-timeline-item>
+                    <nz-timeline-item nzPosition="right" [nzDot]="BieuQuyet">
+                        <div style="height: 132px">
+                            <div class="item BieuQuyet">
+                                <h3 class="title-item">Biểu quyết</h3>
+                                <h4 class="sub-title-item">
+                                    Thêm mới, quản lý các biểu quyết, kết quả biểu quyết trong một cuộc họp.
+                                </h4>
+                            </div>
+                        </div>
+                    </nz-timeline-item>
+                </nz-timeline>
+
+                <ng-template #OnlineMeeting>
+                    <div class="custom-dot" style="background: linear-gradient(180deg, #54a6f0 0%, #1dd2f0 100%);">
+                        <nz-icon nzType="video-camera" nzTheme="fill" style="font-size: 20px; color: #fff" />
+                    </div>
+                </ng-template>
+                <ng-template #QuanLyVanBan>
+                    <div class="custom-dot" style="background: linear-gradient(180deg, #d488e3 0%, #dc6086 100%);">
+                        <nz-icon nzType="file" nzTheme="fill" style="font-size: 20px; color: #fff" />
+                    </div>
+                </ng-template>
+                <ng-template #BieuQuyet>
+                    <div class="custom-dot" style="background-color: #a29fdc;">
+                        <nz-icon nzType="folder" nzTheme="outline" style="font-size: 20px; color: #fff" />
+                    </div>
+                </ng-template>
+
+                @if(!isViewLogin && !meetingId) {
+                    <div style="display: flex; justify-content: center;">
+                        <button nz-button nzType="primary" nzSize="large" (click)="onClickLogin()" style="width: 260px;">
+                            <nz-icon nzType="login" nzTheme="outline" />
+                            Đăng nhập
+                        </button>
+                    </div>
+                
+                }
+            </div>
+        </div>
+    </div>
+
+    <div nz-row [nzGutter]="12">
+      <div nz-col class="gutter-row" [nzSpan]="12"><div class="inner-box">
+        
+      </div></div>
+      <div nz-col class="gutter-row" [nzSpan]="12"><div class="inner-box">
+
+      </div></div>
+    </div>
+    }
+
+    @if(isViewLogin) {
+    <div class="login-container" [class.show]="isViewLogin">
+        <div class="content-login">
+            <div class="header-login">
+                <div class="x-meet">xMeet</div>
+            </div>
+
+            @if(visibleType == 0){
+            <form nz-form [formGroup]="validateForm" class="login-form" (ngSubmit)="loginByAccount()">
+                <nz-form-item style="margin-bottom: 12px !important;">
+                    <nz-form-control nzErrorTip="Vui lòng nhập tên đăng nhập!">
+                        <nz-input-group nzPrefixIcon="user" nzSize="large">
+                            <input type="text" nz-input formControlName="username" placeholder="Tên đăng nhập" />
+                        </nz-input-group>
+                    </nz-form-control>
+                </nz-form-item>
+
+                <nz-form-item style="margin-bottom: 12px !important;">
+                    <nz-form-control nzErrorTip="Vui lòng nhập mật khẩu!">
+                        <nz-input-group nzPrefixIcon="lock" nzSize="large">
+                            <input [type]="isPasswordVisible ? 'text' : 'password'" nz-input formControlName="password"
+                                placeholder="Mật khẩu" />
+                            <span nz-icon [nzType]="isPasswordVisible ? 'eye-invisible' : 'eye'" nzTheme="outline"
+                                nzSuffix (click)="togglePasswordVisibility()" class="password-toggle"></span>
+                        </nz-input-group>
+                    </nz-form-control>
+                </nz-form-item>
+
+                <div class="forgot">
+                    <label nz-checkbox><span>Ghi nhớ</span></label>
+                    <a class="login-form-forgot">Quên mật khẩu?</a>
+                </div>
+
+                <button nz-button class="btn-primary" [nzType]="'primary'" nzSize="large">
+                    <nz-icon nzType="key" nzTheme="outline" />Đăng nhập
+                </button>
+            </form>
+
+
+            @if(meetingId){
+            <button nz-button class="btn-guest" [nzType]="'primary'" nzSize="large" (click)="changeTypeLogin(2)">
+                <nz-icon nzType="user-delete" nzTheme="outline" />
+                Tiếp tục với tư cách Khách
+            </button>
+            }
+            }
+
+            @if(visibleType == 1){
+            <div class="face-recognition-container">
+                <video #loginFaceVideo autoplay playsinline></video>
+                <div class="recognition-ring"></div>
+            </div>
+            <button nz-button class="btn-secondary" [nzType]="'default'" nzSize="large" (click)="changeTypeLogin(0)">
+                <nz-icon nzType="arrow-left" nzTheme="outline" /> Đăng nhập bằng tài khoản
+            </button>
+            }
+
+            @if(visibleType == 2){
+            <div class="guest-container">
+                <nz-input-group nzPrefixIcon="user" nzSize="large">
+                    <input type="text" nz-input [(ngModel)]="guestName" placeholder="Nhập tên của bạn" />
+                </nz-input-group>
+
+                <button nz-button class="btn-primary" nzType="primary" nzSize="large" style="margin-top: 16px;"
+                    [disabled]="!guestName.trim()" (click)="joinAsGuest()">
+                    <nz-icon nzType="login" nzTheme="outline" /> Tham gia
+                </button>
+
+                <button nz-button class="btn-secondary" nzType="default" nzSize="large" style="margin-top: 8px;"
+                    (click)="backToLogin()">
+                    <nz-icon nzType="arrow-left" nzTheme="outline" /> Quay lại
+                </button>
+            </div>
+            }
+        </div>
+    </div>
+    }
+</div>

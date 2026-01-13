@@ -1,0 +1,260 @@
+<nz-page-header nzBackIcon>
+  <nz-page-header-title>PHÒNG HỌP</nz-page-header-title>
+  <nz-page-header-subtitle>Quản lý layout phòng họp</nz-page-header-subtitle>
+  <nz-page-header-extra>
+    <nz-space>
+      <input *nzSpaceItem nz-input placeholder="Tìm kiếm nhanh" [(ngModel)]="filter.keyWord"
+        (keydown.enter)="search()" />
+
+      <button *nzSpaceItem nz-button (click)="reset()">
+        <nz-icon nzType="sync" nzTheme="outline" />
+      </button>
+
+      <button *nzSpaceItem nz-button (click)="search()">
+        <nz-icon nzType="search" nzTheme="outline" />
+      </button>
+
+      <button *nzSpaceItem nz-button nzType="primary" (click)="open('', false)">
+        <nz-icon nzType="plus" nzTheme="outline" />Thêm mới
+      </button>
+    </nz-space>
+  </nz-page-header-extra>
+  <nz-page-header-content>
+    <nz-table #list nzBordered [nzData]="data.data" nzSize="small" [nzFrontPagination]="false"
+      [nzScroll]="{ y: 'calc(100vh - 226px)' }">
+      <thead>
+        <tr>
+          <th nzAlign="center" nzWidth="60px">STT</th>
+          <th nzWidth="160px">Mã phòng</th>
+          <th>Tên phòng</th>
+          <th nzAlign="center" nzWidth="120px">Chiều rộng</th>
+          <th nzAlign="center" nzWidth="120px">Chiều cao</th>
+          <th nzAlign="center" nzWidth="100px">Số bàn</th>
+          <th nzAlign="center" nzWidth="100px">Số ghế</th>
+          <th nzAlign="center" nzWidth="160px">Trạng thái</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of list.data; let i = index; trackBy: trackById">
+          <td nzAlign="center">{{(data.currentPage - 1) * data.pageSize + i + 1}}</td>
+          <td><a (click)="open(item, true)">{{ item.code }}</a></td>
+          <td>{{ item.name }}</td>
+          <td nzAlign="center">{{ item.width }}</td>
+          <td nzAlign="center">{{ item.height }}</td>
+          <td nzAlign="center">{{ getTableCount(item) }}</td>
+          <td nzAlign="center">{{ getChairCount(item) }}</td>
+          <td nzAlign="center">
+            <nz-tag [nzColor]="item.isActive ? 'success' : 'error'">
+              <nz-icon [nzType]="item.isActive ? 'check-circle' : 'close-circle'" />
+              <span>{{item.isActive ? 'Kích hoạt' : 'Khoá'}}</span>
+            </nz-tag>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-page-header-content>
+</nz-page-header>
+
+<div class="paging-container">
+  <div>Tổng {{data.totalRecord}} bản ghi</div>
+  <nz-pagination [nzPageIndex]="data.currentPage" [nzTotal]="data.totalRecord" nzShowSizeChanger
+    [nzPageSize]="data.pageSize" nzShowQuickJumper (nzPageIndexChange)="pageIndexChange($event)"
+    (nzPageSizeChange)="pageSizeChange($event)">
+  </nz-pagination>
+</div>
+
+<nz-drawer [nzWidth]="1200" [nzClosable]="false" [nzVisible]="visible" nzPlacement="right" [nzExtra]="extra"
+  [nzTitle]="isEdit ? 'CHỈNH SỬA PHÒNG HỌP' : 'TẠO MỚI PHÒNG HỌP'" (nzOnClose)="close()">
+  <ng-container *nzDrawerContent>
+    <div class="room-form-container">
+      <!-- Form thông tin cơ bản -->
+      <div class="form-section">
+        <h4>
+          <nz-icon nzType="info-circle" nzTheme="outline"></nz-icon>
+          Thông tin cơ bản
+        </h4>
+
+        <nz-row [nzGutter]="16">
+          <nz-col [nzSpan]="4">
+            <label>Mã phòng <span class="required">*</span></label>
+            <input nz-input [(ngModel)]="dto.code" [disabled]="isEdit" class="space-control"
+              placeholder="Nhập mã phòng" />
+          </nz-col>
+          <nz-col [nzSpan]="6">
+            <label>Tên phòng <span class="required">*</span></label>
+            <input nz-input [(ngModel)]="dto.name" class="space-control" placeholder="Nhập tên phòng" />
+          </nz-col>
+          <nz-col [nzSpan]="14">
+            <label>Địa chỉ</label>
+            <input nz-input [(ngModel)]="dto.address" class="space-control" placeholder="Nhập địa chỉ phòng họp" />
+          </nz-col>
+        </nz-row>
+
+        <nz-row [nzGutter]="16">
+          <nz-col [nzSpan]="24">
+            <label>WsStream URL</label>
+            <input nz-input [(ngModel)]="dto.wsStreamUrl" class="space-control"
+              placeholder="Nhập đường dẫn WebSocket hoặc link stream" />
+          </nz-col>
+        </nz-row>
+
+        <nz-row [nzGutter]="16">
+          <nz-col [nzSpan]="8">
+            <label>Chiều rộng (px)</label>
+            <input nz-input type="number" [(ngModel)]="canvasWidth" class="space-control" placeholder="800" />
+          </nz-col>
+          <nz-col [nzSpan]="8">
+            <label>Chiều cao (px)</label>
+            <input nz-input type="number" [(ngModel)]="canvasHeight" class="space-control" placeholder="600" />
+          </nz-col>
+          <nz-col [nzSpan]="8">
+            <label>Trạng thái</label>
+            <nz-radio-group [(ngModel)]="dto.isActive" class="space-control">
+              <label nz-radio [nzValue]="true">Kích hoạt</label>
+              <label nz-radio [nzValue]="false">Khoá</label>
+            </nz-radio-group>
+          </nz-col>
+        </nz-row>
+      </div>
+
+      <!-- Công cụ thiết kế -->
+      <div class="form-section">
+        <h4>
+          <nz-icon nzType="tool" nzTheme="outline"></nz-icon>
+          Công cụ thiết kế
+        </h4>
+
+        <nz-row [nzGutter]="16">
+          <!-- Loại bàn -->
+          <nz-col [nzSpan]="8">
+            <label>Loại bàn</label>
+            <nz-select [(ngModel)]="dto.tableType" class="space-control" nzPlaceHolder="Chọn loại bàn">
+              <nz-option nzValue="rectangle" nzLabel="Chữ nhật"></nz-option>
+              <nz-option nzValue="round" nzLabel="Tròn"></nz-option>
+              <nz-option nzValue="ellipse" nzLabel="Elip"></nz-option>
+            </nz-select>
+          </nz-col>
+
+          <nz-col [nzSpan]="8">
+            <label>Số lượng ghế: {{ dto.chairCount }}</label>
+            <input nz-input type="range" [(ngModel)]="dto.chairCount" min="0" max="40" class="space-control" />
+          </nz-col>
+
+          <nz-col [nzSpan]="8">
+            <label>&nbsp;</label>
+            <button nz-button nzType="primary" (click)="addTableWithChairs()" [disabled]="!dto.tableType"
+              class="space-control" style="width: 100%">
+              <nz-icon nzType="plus-circle" nzTheme="outline"></nz-icon>
+              Thêm bàn & ghế
+            </button>
+          </nz-col>
+        </nz-row>
+
+        <nz-row [nzGutter]="16">
+          <nz-col [nzSpan]="24">
+            <nz-space>
+              <button *nzSpaceItem nz-button (click)="clearRoom()">
+                <nz-icon nzType="delete" nzTheme="outline"></nz-icon>
+                Xóa tất cả
+              </button>
+            </nz-space>
+          </nz-col>
+        </nz-row>
+      </div>
+
+      <!-- Thuộc tính item được chọn -->
+      <div class="form-section" *ngIf="selectedItem">
+        <h4>
+          <nz-icon nzType="setting" nzTheme="outline"></nz-icon>
+          Thuộc tính đối tượng
+        </h4>
+
+        <nz-row [nzGutter]="16">
+          <nz-col [nzSpan]="6">
+            <label>Loại</label>
+            <input nz-input [value]="getTypeName(selectedItem)" disabled class="space-control" />
+          </nz-col>
+          <nz-col [hidden]="true" [nzSpan]="6">
+            <label>Kiểu</label>
+            <input nz-input [value]="getStyleName(selectedItem)" disabled class="space-control" />
+          </nz-col>
+          <nz-col [nzSpan]="3">
+            <label>X</label>
+            <input nz-input type="number" [(ngModel)]="selectedItem.x" min="0" class="space-control" />
+          </nz-col>
+          <nz-col [nzSpan]="3">
+            <label>Y</label>
+            <input nz-input type="number" [(ngModel)]="selectedItem.y" min="0" class="space-control" />
+          </nz-col>
+          <nz-col [nzSpan]="3">
+            <label>Rộng</label>
+            <input nz-input type="number" [(ngModel)]="selectedItem.width"
+              [min]="selectedItem.type === 'chair' ? 30 : 80" [max]="selectedItem.type === 'chair' ? 100 : 500"
+              class="space-control" />
+          </nz-col>
+          <nz-col [nzSpan]="3">
+            <label>Cao</label>
+            <input nz-input type="number" [(ngModel)]="selectedItem.height"
+              [min]="selectedItem.type === 'chair' ? 30 : 80" [max]="selectedItem.type === 'chair' ? 100 : 500"
+              class="space-control" />
+          </nz-col>
+          <nz-col [nzSpan]="3">
+            <label>Góc xoay (°)</label>
+            <input nz-input type="number" [(ngModel)]="selectedItem.rotation"
+              (ngModelChange)="rotateItem(selectedItem, $event)" min="0" max="359" class="space-control" />
+          </nz-col>
+
+        </nz-row>
+      </div>
+
+      <!-- Canvas vẽ layout -->
+      <div class="form-section">
+        <h4>
+          <nz-icon nzType="appstore" nzTheme="outline"></nz-icon>
+          Canvas thiết kế (Kéo thả để sắp xếp)
+        </h4>
+
+        <div class="canvas-container">
+          <div class="room-canvas" [style.width.px]="canvasWidth" [style.height.px]="canvasHeight"
+            (click)="deselectItem()" (mousemove)="onCanvasMouseMove($event)" (mouseup)="onCanvasMouseUp()">
+
+            <div *ngFor="let item of roomItems; trackBy: trackByItemId"
+              class="room-item item-{{item.type}} style-{{item.style}}" [class.selected]="selectedItem?.id === item.id"
+              [class.dragging]="draggedItem?.id === item.id" [style.left.px]="item.x" [style.top.px]="item.y"
+              [style.width.px]="item.width" [style.height.px]="item.height"
+              [style.transform]="'rotate(' + item.rotation + 'deg)'" (mousedown)="onItemMouseDown($event, item)"
+              (click)="selectItem(item, $event)">
+
+              <div class="item-content">
+                <span nz-icon [nzType]="getItemIconType(item)" nzTheme="outline">
+                </span>
+              </div>
+
+              <div class="item-controls" [style.transform]="getControlsRotation(item)">
+                <button (click)="rotateItem(item, $event)" nz-tooltip nzTooltipTitle="Xoay 90°">
+                  <nz-icon nzType="reload" nzTheme="outline"></nz-icon>
+                </button>
+                <button class="delete-btn" (click)="deleteItem(item, $event)" nz-tooltip nzTooltipTitle="Xóa">
+                  <nz-icon nzType="delete" nzTheme="outline"></nz-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </ng-container>
+
+  <ng-template #extra>
+    <nz-space>
+      <button *nzSpaceItem nz-button nzType="primary" (click)="save()" class="btn-green">
+        <nz-icon nzType="save" nzTheme="outline" /> {{isEdit ? 'Cập nhật' : 'Lưu'}}
+      </button>
+      <button *nzSpaceItem nz-button nzType="primary" nzDanger (click)="close()">
+        <nz-icon nzType="close" nzTheme="outline" />
+      </button>
+    </nz-space>
+  </ng-template>
+</nz-drawer>

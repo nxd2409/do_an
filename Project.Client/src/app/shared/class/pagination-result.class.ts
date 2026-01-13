@@ -1,0 +1,14 @@
+export class PaginationResult {
+    currentPage: number = 0;
+    totalPage: number = 0;
+    pageSize: number = 0;
+    keyWord: string = '';
+    totalRecord: number = 0;
+    data: any = [];
+    countMeeting : CountMeeting = new CountMeeting();
+}
+
+export class CountMeeting{
+    sapDienRa : number = 0;
+    dangDienRa : number = 0;
+}

@@ -1,0 +1,689 @@
+<div class="sidebar">
+  <nav class="nav">
+    <div class="nav-item">
+      <nz-icon nzType="home" nzTheme="outline" />
+    </div>
+    <div class="nav-item"  [appPermission]="MANAGE_MEETING.CREATE_MEETING" (click)="createMeetingOpen()" nz-tooltip="Tạo lịch họp chi tiết">
+      <nz-icon nzType="video-camera-add" nzTheme="outline" />
+    </div>
+    <div class="nav-item">
+      <nz-icon nzType="open-a-i" nzTheme="outline" />
+    </div>
+    <div class="nav-item">
+      <nz-icon nzType="lock" nzTheme="outline" />
+    </div>
+    <div class="nav-item">
+      <nz-icon nzType="info-circle" nzTheme="outline" />
+    </div>
+    <div class="nav-item" [appPermission]="MANAGE_MEETING.GO_TO_ADMIN" nz-tooltip="Chuyển sang trang quản trị" (click)="navigateToAdmin()">
+      <nz-icon nzType="user-switch" nzTheme="outline" />
+    </div>
+    <div class="nav-item-red" (click)="logOut()" nz-tooltip="Đăng xuất">
+      <nz-icon nzType="logout" nzTheme="outline" />
+    </div>
+  </nav>
+  <div class="nav-item">
+    <nz-avatar nz-tooltip [nzTooltipTitle]="accountInfo?.fullName" nzTooltipPlacement="right"
+      [nzText]="global.getInitialsAvatar(accountInfo?.fullName)" [nzSize]="32"
+      [ngStyle]="{'background-color': global.getAvatarColor(accountInfo?.fullName), color: 'white', 'font-weight': 600}">
+    </nz-avatar>
+  </div>
+  <div class="nav-item" (click)="modalProfileOpen()">
+    <nz-icon nzType="setting" nzTheme="outline" />
+  </div>
+</div>
+
+<div class="main-content">
+  <div nz-row>
+    <div nz-col nzSpan="16">
+      <div class="x-meet">xMeet</div>
+      <div style="padding: 22px 0px 32px 40px">
+        <nz-space>
+          <button *nzSpaceItem nz-button nzType="primary" class="btn-meet" nz-dropdown
+            [nzDropdownMenu]="inputCreateMeeting" nzTrigger="click">
+            <nz-icon nzType="video-camera" nzTheme="fill" style="font-size: x-large" />
+            <div style="
+                display: flex;
+                flex-direction: column;
+                justify-content: start;
+              ">
+              <span style="font-size: larger"> Cuộc họp mới </span>
+              <span style="font-size: small"> Bắt đầu cuộc họp </span>
+            </div>
+          </button>
+          <nz-dropdown-menu #inputCreateMeeting="nzDropdownMenu">
+            <div class="dropdown-input">
+              <nz-input-search nzEnterButton="Bắt đầu ngay" (nzSearch)="onStartMeeting()">
+                <input nz-input [(ngModel)]="nameMeeting" placeholder="Tên cuộc họp" nzSize="large" />
+              </nz-input-search>
+            </div>
+          </nz-dropdown-menu>
+          <button *nzSpaceItem nz-button nzType="default" class="btn-meet" nz-dropdown
+            [nzDropdownMenu]="inputLinkMeeting" nzTrigger="click">
+            <nz-icon nzType="link" style="font-size: x-large" />
+            <div style="
+                display: flex;
+                flex-direction: column;
+                justify-content: start;
+              ">
+              <span style="font-size: larger"> Tham gia họp </span>
+              <span style="font-size: small"> Nhập link cuộc họp </span>
+            </div>
+          </button>
+          <nz-dropdown-menu #inputLinkMeeting="nzDropdownMenu">
+            <div class="dropdown-input">
+              <nz-input-search nzEnterButton="Tham gia" (nzSearch)="onOpenMeetingByLink()">
+                <input nz-input [(ngModel)]="linkMeeting" placeholder="http://..." nzSize="large" />
+              </nz-input-search>
+            </div>
+          </nz-dropdown-menu>
+        </nz-space>
+      </div>
+      <div class="search-input">
+        <input nz-input [(ngModel)]="filter.name" (keydown.enter)="searchMeeting()" placeholder="Tìm kiếm cuộc họp" />
+      </div>
+      <div class="search-meeting">
+        <nz-segmented [(ngModel)]="filter.status" (ngModelChange)="searchMeeting()">
+          <label nz-segmented-item [nzValue]="meetingStatus.ChuaBatDau">
+            <div>
+              <i class="bi bi-calendar"></i>
+              Sắp diễn ra
+              <nz-badge nzStandalone [nzCount]="listMeeting.countMeeting.sapDienRa || 0"
+                style="margin: 0px 0px 2px 4px" />
+            </div>
+          </label>
+          <label nz-segmented-item [nzValue]="meetingStatus.DangHop">
+            <div>
+              <i class="bi bi-activity"></i>
+              Đang diễn ra
+              <nz-badge nzStandalone [nzCount]="listMeeting.countMeeting.dangDienRa || 0"
+                style="margin: 0px 0px 2px 4px" />
+            </div>
+          </label>
+          <label nz-segmented-item [nzValue]="meetingStatus.KetThuc">
+            <div>
+              <i class="bi bi-telephone-x"></i>
+              Kết thúc
+            </div>
+          </label>
+        </nz-segmented>
+      </div>
+      <div class="list-meeting">
+        <nz-table [nzData]="listMeeting.data" nzSize="small" [nzFrontPagination]="false">
+          <tbody>
+            <tr *ngFor="let data of listMeeting.data; let i = index">
+              <td style="padding: 18px 6px">
+                <span style="font-weight: 600"> {{data.name}} </span>
+                <br />
+                <span style="color: gray; font-size: small">
+                  <i class="bi bi-pin-map-fill" style="margin-right: 6px"> </i>
+                  {{data.address ? data.address : 'Trực tuyến'}}
+                </span>
+              </td>
+              <td nzAlign="center">
+                <span> {{data.expectedStartTime | date: 'dd/MM/yyyy'}} </span>
+                <br />
+                <span style="color: gray; font-size: small">
+                  {{data.expectedStartTime | date: 'HH:mm'}}
+                </span>
+              </td>
+              <td>
+                <nz-avatar-group *ngIf="data?.personal?.length > 0">
+                  <ng-container *ngFor="let person of data.personal; let idx = index">
+                    <nz-avatar *ngIf="idx < 4" nz-tooltip [nzTooltipTitle]="person.fullName" nzTooltipPlacement="right"
+                      [nzText]="global.getInitialsAvatar(person.fullName)" [nzSize]="32"
+                      [ngStyle]="{'background-color': global.getAvatarColor(person.fullName), color: 'white','font-weight': 600}">
+                    </nz-avatar>
+                  </ng-container>
+                  <nz-avatar *ngIf="data.personal.length > 4" [nzText]="'+' + (data.personal.length - 4)" [nzSize]="32"
+                    [ngStyle]="{
+                                    'background-color': '#d9d9d9',
+                                    color: '#333',
+                                    'font-weight': 600
+                                    }">
+                  </nz-avatar>
+                </nz-avatar-group>
+              </td>
+              <td nzAlign="center">
+                <nz-tag *ngIf="data.status == meetingStatus.ChuaBatDau" nzColor="processing">
+                  Sắp diễn ra
+                </nz-tag>
+                <nz-tag *ngIf="data.status == meetingStatus.DangHop" nzColor="success">
+                  Đang diễn ra
+                </nz-tag>
+                <nz-tag *ngIf="data.status == meetingStatus.KetThuc" nzColor="default">
+                  Kết thúc
+                </nz-tag>
+              </td>
+              <td nzAlign="center" style="width: 200px">
+                <nz-space *ngIf="data.status == meetingStatus.ChuaBatDau">
+                    <button *nzSpaceItem nz-button nzType="dashed" (click)="openMeetingDetail(data)">
+                      <i class="bi bi-info-circle"></i>
+                      Thông tin cuộc họp
+                    </button>
+                    <button *nzSpaceItem nz-button nzType="default" (click)="editMeeting(data, $event)">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                    <button *nzSpaceItem nz-button nzDanger (click)="deleteMeeting(data, $event)">
+                      <i class="bi bi-trash3"></i>
+                    </button>
+                </nz-space>
+                <nz-space *ngIf="data.status == meetingStatus.DangHop">
+                    <button nz-button nzType="primary" class="btn-green" (click)="openMeetingDetail(data)">
+                      <i class="bi bi-film"></i>
+                      Tham gia họp
+                    </button>
+                    <button nz-button nzType="default" (click)="editMeeting(data, $event)">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                </nz-space>
+                <button nz-button nzType="primary" (click)="openMeetingDetail(data)"
+                  *ngIf="data.status == meetingStatus.KetThuc">
+                  <i class="bi bi-info-circle"> </i>
+                  Chi tiết cuộc họp
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </div>
+      <div class="paging-container">
+        <div>Tổng {{listMeeting.totalRecord}} cuộp họp</div>
+        <nz-pagination [nzPageIndex]="listMeeting.currentPage" [nzTotal]="listMeeting.totalRecord"
+          [nzPageSize]="listMeeting.pageSize" (nzPageIndexChange)="pageIndexChange($event)"
+          (nzPageSizeChange)="pageSizeChange($event)">
+        </nz-pagination>
+      </div>
+    </div>
+    <div nz-col nzSpan="8">
+      <div class="card-calender">
+        <nz-calendar [(ngModel)]="date" [(nzMode)]="mode" (nzPanelChange)="panelChange($event)"
+          (nzSelectChange)="onDateSelect($event)" [nzDateCell]="dateCellTpl">
+        </nz-calendar>
+        <ng-template #dateCellTpl let-date>
+          <div class="calendar-cell">
+            <div *ngIf="hasEvent(date)" class="event-indicator"></div>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nz-modal nzWidth="90%" [(nzVisible)]="isVisibleCreateMeeting" [nzStyle]="{ top: '10px' }" [nzTitle]="undefined"
+  (nzOnCancel)="createMeetingClose()" (nzOnOk)="createMeeting()" nzOkText="Lưu thông tin">
+  <ng-container *nzModalContent>
+    <nz-tabs nzCentered>
+      <nz-tab [nzTitle]="ttch">
+        <ng-template #ttch>
+          <i class="bi bi-info-circle"> </i>
+          Thông tin cuộc họp
+        </ng-template>
+        <div class="tab-create">
+          <div nz-row [nzGutter]="12">
+            <div nz-col class="gutter-row" [nzSpan]="12">
+              <div class="inner-box">
+                <label> Tên cuộc họp </label>
+                <input nz-input [(ngModel)]="meeting.name" class="space-control" />
+                <label> Nội dung / Mục tiêu </label>
+                <input nz-input [(ngModel)]="meeting.meetContent" class="space-control" />
+                <label> Phòng họp </label>
+                <nz-select [(ngModel)]="meeting.roomId" class="space-control" nzPlaceHolder="Chọn phòng họp"
+                  nzShowSearch (ngModelChange)="onRoomChange($event)">
+                  <nz-option *ngFor="let room of listRoom" [nzValue]="room.code" [nzLabel]="room.name">
+                  </nz-option>
+                </nz-select>
+                <label> Thời gian bắt đầu dự kiến </label>
+                <nz-date-picker [(ngModel)]="meeting.expectedStartTime" class="space-control" nzShowTime
+                  [nzFormat]="'dd/MM/yyyy HH:mm:ss'">
+                </nz-date-picker>
+                <label> Ghi chú </label>
+                <textarea rows="4" nz-input [(ngModel)]="meeting.notes" class="space-control">
+                </textarea>
+                <div class="project-file">
+                  <div class="file-upload-area" (click)="fileInput.click()">
+                    <div>
+                      <img src="img/folder_upload.png" class="img-upload" />
+                    </div>
+                    <h3>Tải lên file đính kèm</h3>
+                    <p style="color: #666; font-size: 14px">
+                      Hỗ trợ các định dạng: PDF, DOC, DOCX, XLS, XLSX, PNG, JPG
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div nz-col class="gutter-row" [nzSpan]="12">
+              <div class="inner-box">
+                <nz-empty *ngIf="meeting.files.length === 0"
+                  [nzNotFoundContent]="'Không có văn bản tài liệu nào được tải lên!'"
+                  [nzNotFoundFooter]="'Vui lòng chọn file để đính kèm trong cuộc họp!'"
+                  style="padding-top: 16%; color: gray">
+                </nz-empty>
+                <div class="file-list" *ngIf="meeting.files.length > 0">
+                  @for(i of meeting.files; track i){
+                  <div class="file-item">
+                    <div class="file-icon">
+                      <img [src]="i.icon" />
+                    </div>
+                    <div class="file-info">
+                      <div class="file-name">{{i.fileName}}</div>
+                      <div class="file-meta">
+                        <span>
+                          {{ i.fileSize < 1048576 ? (i.fileSize / 1024 | number : "1.1-1" ) + " KB" : (i.fileSize /
+                            1048576 | number : "1.1-1" ) + " MB" }} </span>
+                            <span>
+                              {{i.createDate | date: 'dd/MM/yyyy HH:mm'}}
+                            </span>
+                      </div>
+                    </div>
+                    <div class="file-actions">
+                      <i class="bi bi-cloud-download" nz-tooltip="Tải xuống" style="color: #10b981">
+                      </i>
+                      <i class="bi bi-trash3" style="color: red" nz-tooltip="Xoá" (click)="deleteFile(i)">
+                      </i>
+                    </div>
+                  </div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nz-tab>
+      <nz-tab [nzTitle]="tv">
+        <ng-template #tv>
+          <i class="bi bi-person-add"> </i>
+          Thành viên
+        </ng-template>
+        <div class="tab-create">
+          <div nz-row [nzGutter]="12">
+            <div nz-col class="gutter-row" [nzSpan]="16">
+              <div class="inner-box">
+                <div style="padding-bottom: 5px">
+                  <nz-input-group nzSearch [nzSuffix]="inputClearTpl" [nzAddOnAfter]="suffixIcons">
+                    <input type="text" nz-input placeholder="Tìm kiếm" [(ngModel)]="keyword" (keydown.enter)="search()"
+                      allowClear />
+                  </nz-input-group>
+                  <ng-template #inputClearTpl>
+                    <nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
+                      (click)="keyword = ''; search()" />
+                  </ng-template>
+                  <ng-template #suffixIcons>
+                    <button nz-button>
+                      <nz-icon nzType="search" (click)="search()" />
+                    </button>
+                    <button nz-button>
+                      <nz-icon nzType="redo" (click)="keyword = ''; search()" />
+                    </button>
+                  </ng-template>
+                </div>
+                <nz-table #expandTable [nzData]="listOfMapData" nzTableLayout="fixed" nzSize="small" nzBordered
+                  [nzFrontPagination]="false" [nzScroll]="{ y: 'calc(100dvh - 240px)' }">
+                  <thead>
+                    <tr>
+                      <th nzWidth="32px" nzAlign="center"></th>
+                      <th nzAlign="center">Đơn vị | Thành viên</th>
+                      <th nzAlign="center">Chức vụ | Địa chỉ</th>
+                      <th nzAlign="center" nzWidth="80px">Thành viên</th>
+                      <th nzAlign="center" nzWidth="66px">Chủ trì</th>
+                      <th nzAlign="center" nzWidth="66px">Thư ký</th>
+                      <th nzAlign="center" nzWidth="100px">
+                        Tham gia
+                        <br />
+                        biểu quyết
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (data of expandTable.data; track data) { @for (item of
+                    mapOfExpandedData[data.key]; track item){ @if ((item.parent
+                    && item.parent.expand) || !item.parent){
+                    <tr>
+                      <td nzAlign="center">
+                        <nz-icon *ngIf="item.typeBuildTree === 'USER' || item.typeBuildTree === 'ORG'"
+                          [nzType]="item.typeBuildTree === 'USER' ? 'user' : 'home'"
+                          [style.color]="item.typeBuildTree === 'USER' ? '#378a00' : '#1890ff'" />
+                      </td>
+                      <td [nzIndentSize]="item.level! * 20" [nzShowExpand]="!!item.children" [(nzExpand)]="item.expand"
+                        (nzExpandChange)="collapse(mapOfExpandedData[data.key], item, $event)">
+                        <span *ngIf="item.typeBuildTree == 'ORG'" style="font-weight: 600">
+                          {{ item.fullName }}
+                        </span>
+                        <span *ngIf="item.typeBuildTree == 'USER'">
+                          {{ item.fullName }}
+                        </span>
+                      </td>
+                      <td>
+                        <div *ngIf="item.typeBuildTree == 'USER'">
+                          <div>
+                            <span style="font-weight: 600"> Chức vụ: </span>
+                            {{item.title?.name}}
+                          </div>
+                          <div>
+                            <span style="font-weight: 600"> Địa chỉ: </span>
+                            {{item.address}}
+                          </div>
+                        </div>
+                      </td>
+                      <td nzAlign="center">
+                        <label nz-checkbox [(ngModel)]="item.isThanhVien" [nzDisabled]="isEditMode && isOngoingMeeting && isOriginalMember(item)"
+                          (ngModelChange)="onChangeCheckbox(item, 'isThanhVien')">
+                        </label>
+                      </td>
+                      <td nzAlign="center">
+                        <label *ngIf="item.typeBuildTree === 'USER'" nz-checkbox [(ngModel)]="item.isChuTri" [nzDisabled]="isEditMode && isOngoingMeeting && isOriginalMember(item)"
+                          (ngModelChange)="onChangeCheckbox(item, 'isChuTri')">
+                        </label>
+                      </td>
+                      <td nzAlign="center">
+                        <label *ngIf="item.typeBuildTree === 'USER'" nz-checkbox [(ngModel)]="item.isThuKy" [nzDisabled]="isEditMode && isOngoingMeeting && isOriginalMember(item)"
+                          (ngModelChange)="onChangeCheckbox(item,'isThuKy')">
+                        </label>
+                      </td>
+                      <td nzAlign="center">
+                        <label nz-checkbox [(ngModel)]="item.isParticipateInVoting"  [nzDisabled]="!item.isThanhVien || (isEditMode && isOngoingMeeting && isOriginalMember(item))"
+                          (ngModelChange)="onChangeCheckbox(item, 'isParticipateInVoting')">
+                        </label>
+                      </td>
+                    </tr>
+                    } } }
+                  </tbody>
+                </nz-table>
+              </div>
+            </div>
+            <div nz-col class="gutter-row" [nzSpan]="8">
+              <div class="inner-box">
+                <nz-table #basicTable [nzData]="meeting.personal" nzSize="small" [nzFrontPagination]="false" nzBordered
+                  [nzScroll]="{ y: 'calc(100dvh - 220px)' }">
+                  <thead>
+                    <tr>
+                      <th nzWidth="60px" nzAlign="center">STT</th>
+                      <th>Họ và tên</th>
+                      <th nzAlign="center">Vai trò</th>
+                      <th nzAlign="center">Bỏ chọn</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let data of basicTable.data; let i = index">
+                      <td nzAlign="center">{{ i + 1}}</td>
+                      <td>
+                        {{data.fullName}}
+                        <br />
+                        <span style="color: gray; font-size: small">
+                          ({{data.title?.name}})
+                        </span>
+                      </td>
+                      <td nzAlign="center">
+                        <nz-tag [nzColor]="data.isChuTri ? 'success' : data.isThuKy ? 'processing' : 'default'">
+                          {{ data.isChuTri ? 'Chủ trì' : data.isThuKy ? 'Thư ký'
+                          : 'Thành viên' }}
+                        </nz-tag>
+                      </td>
+                      <td nzAlign="center">
+                        <button nz-button nzType="dashed" nzSize="small" (click)="deletePersonal(data)">
+                          <nz-icon nzType="minus" nzTheme="outline" />
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </nz-table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nz-tab>
+
+      <nz-tab [nzTitle]="bq">
+        <ng-template #bq>
+          <i class="bi bi-clipboard-check"> </i>
+          Biểu quyết
+        </ng-template>
+        <div class="tab-create">
+          <div class="bieu-quyet-container">
+            <div style="
+                display: flex;
+                justify-content: flex-end;
+                padding: 0 6px;
+                padding-bottom: 12px;
+              ">
+              <button nz-button nzType="dashed" (click)="addVote()">
+                <nz-icon nzType="plus" nzTheme="outline" />Thêm biểu quyết
+              </button>
+            </div>
+
+            <nz-empty *ngIf="listMeetingVote.length == 0"
+              [nzNotFoundContent]="'Không có biểu quyết nào trong cuộc họp!'"
+              [nzNotFoundFooter]="'Vui lòng thêm mới biểu quyết!'" style="padding-top: 100px; color: gray"></nz-empty>
+            <nz-table #meetingVoteTable [nzData]="listMeetingVote" *ngIf="listMeetingVote.length != 0" nzSize="small"
+              [nzFrontPagination]="false" nzBordered>
+              <thead>
+                <tr>
+                  <th nzAlign="center" nzWidth="60px">STT</th>
+                  <th nzAlign="center">Biểu quyết</th>
+                  <th nzAlign="center">Mô tả</th>
+                  <th nzAlign="center" nzWidth="120px">Thời gian (phút)</th>
+                  <th nzAlign="center" nzWidth="360px">Văn bản đính kèm</th>
+                  <th nzAlign="center" nzWidth="50px"></th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let data of meetingVoteTable.data; let i = index">
+                  <td nzAlign="center">{{ i + 1 }}</td>
+                  <td>
+                    <textarea rows="2" nz-input [(ngModel)]="data.name" placeholder="Tiêu đề"></textarea>
+                  </td>
+                  <td>
+                    <textarea rows="2" nz-input [(ngModel)]="data.notes" placeholder="Mô tả"></textarea>
+                  </td>
+                  <td nzAlign="center">
+                    <input nz-input type="number" min="1" max="120" [(ngModel)]="data.time" />
+                  </td>
+
+                  <td>
+                    <div class="file-list-vote">
+                      <ng-container *ngFor="let e of data.files">
+                        <div class="file-item">
+                          <div class="file-icon"><img [src]="e.icon" /></div>
+                          <div class="file-info">
+                            <div class="file-name">{{ e.fileName }}</div>
+
+                            <div class="file-meta">
+                              <span>{{ e.fileSize < 1048576 ? (e.fileSize / 1024 | number : '1.1-1' ) + ' KB' :
+                                  (e.fileSize / 1048576 | number : '1.1-1' ) + ' MB' }}</span>
+                                  <span>{{ e.createDate | date: 'dd/MM/yyyy HH:mm'
+                                    }}</span>
+                            </div>
+                          </div>
+                          <div class="file-actions">
+                            <i class="bi bi-x-circle" nz-tooltip="Xóa" (click)="deleteFileMeetingVoteCreate(i, e)"></i>
+                          </div>
+                        </div>
+                      </ng-container>
+
+                      <div class="file-upload-area-vote" (click)="onClickUploadFile(i)">
+                        <i class="bi bi-upload" style="margin-right: 6px"></i>
+                        <span>Tải lên văn bản biểu quyết</span>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td nzAlign="center">
+                    <button nz-button nzDanger (click)="deleteVote(i)">
+                      <nz-icon nzType="delete"></nz-icon>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </div>
+        </div>
+      </nz-tab>
+
+      
+    </nz-tabs>
+  </ng-container>
+</nz-modal>
+
+<input type="file" #fileInput hidden multiple (change)="upload($event)" />
+
+<!-- #region Drawer tạo mới biểu quyết  -->
+
+<input type="file" #fileInputAddBieuQuyet hidden multiple (change)="uploadFileMeetingVote($event)" />
+
+<!-- #endregion -->
+
+<!-- #region modal Profile-->
+<nz-modal [(nzVisible)]="isVisibleProfile" nzTitle="Chỉnh sửa hồ sơ" nzWidth="30%" [nzStyle]="{ top: '40px' }"
+  (nzOnCancel)="isVisibleProfile=!isVisibleProfile" [nzFooter]="null">
+  <ng-container *nzModalContent>
+    <nz-tabs nzCentered>
+      <nz-tab [nzTitle]="tt">
+        <ng-template #tt>
+          <nz-icon nzType="info-circle" nzTheme="outline" />
+          Thông tin
+        </ng-template>
+        <div style="padding: 10px 20px">
+          <label>Tài khoản</label>
+          <input nz-input [(ngModel)]="dto.userName" [disabled]="true" class="space-control" />
+
+          <label>Tên đầy đủ</label>
+          <input nz-input [(ngModel)]="dto.fullName" class="space-control" />
+
+          <label>Đơn vị</label>
+          <input nz-input [(ngModel)]="dto.orgId" [disabled]="true" class="space-control" />
+
+          <label>Chức danh</label>
+          <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.titleCode" class="space-control">
+            <nz-option *ngFor="let i of lstTitle" [nzLabel]="i.name" [nzValue]="i.code"></nz-option>
+          </nz-select>
+
+          <label>Số điện thoại</label>
+          <input nz-input [(ngModel)]="dto.phone" class="space-control" />
+
+          <label>Email</label>
+          <input nz-input [(ngModel)]="dto.email" class="space-control" />
+
+          <label>Địa chỉ</label>
+          <input nz-input [(ngModel)]="dto.address" class="space-control" />
+
+          <nz-radio-group [(ngModel)]="dto.isActive">
+            <label nz-radio [nzValue]="true">Kích hoạt</label>
+            <label nz-radio [nzValue]="false">Khoá</label>
+          </nz-radio-group>
+        </div>
+        <nz-space style="
+            padding: 10px 20px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: end;
+          ">
+          <button (click)="updateProfile()" *nzSpaceItem nz-button nzType="primary" class="btn-green">
+            <nz-icon nzType="save" nzTheme="outline" /> Cập nhật
+          </button>
+          <button *nzSpaceItem nz-button nzType="primary" nzDanger (click)="isVisibleProfile=!isVisibleProfile">
+            <nz-icon nzType="close" nzTheme="outline" /> Đóng
+          </button>
+        </nz-space>
+      </nz-tab>
+      <!-- ĐỔI MẬT KHẨU -->
+      <nz-tab [nzTitle]="changePass">
+        <ng-template #changePass>
+          <nz-icon nzType="lock" nzTheme="outline" />
+          Đổi mật khẩu
+        </ng-template>
+        
+        <div style="padding: 10px 20px">
+          <label>Mật khẩu hiện tại <span style="color: red">*</span></label>
+          <nz-input-group [nzSuffix]="suffixTemplateCurrent" class="space-control">
+            <input 
+              [type]="passwordVisibleCurrent ? 'text' : 'password'" 
+              nz-input 
+              placeholder="Nhập mật khẩu hiện tại"
+              [(ngModel)]="modelChangePass.currentPassword" 
+            />
+          </nz-input-group>
+          <ng-template #suffixTemplateCurrent>
+            <span 
+              nz-icon 
+              [nzType]="passwordVisibleCurrent ? 'eye-invisible' : 'eye'" 
+              (click)="passwordVisibleCurrent = !passwordVisibleCurrent"
+              style="cursor: pointer;">
+            </span>
+          </ng-template>
+
+          <label>Mật khẩu mới <span style="color: red">*</span></label>
+          <nz-input-group [nzSuffix]="suffixTemplateNew" class="space-control">
+            <input 
+              [type]="passwordVisibleNew ? 'text' : 'password'" 
+              nz-input 
+              placeholder="Nhập mật khẩu mới"
+              [(ngModel)]="modelChangePass.newPassword" 
+            />
+          </nz-input-group>
+          <ng-template #suffixTemplateNew>
+            <span 
+              nz-icon 
+              [nzType]="passwordVisibleNew ? 'eye-invisible' : 'eye'" 
+              (click)="passwordVisibleNew = !passwordVisibleNew"
+              style="cursor: pointer;">
+            </span>
+          </ng-template>
+
+          <label>Xác nhận mật khẩu mới <span style="color: red">*</span></label>
+          <nz-input-group [nzSuffix]="suffixTemplateConfirm" class="space-control">
+            <input 
+              [type]="passwordVisibleConfirm ? 'text' : 'password'" 
+              nz-input 
+              placeholder="Nhập lại mật khẩu mới"
+              [(ngModel)]="modelChangePass.confirmNewPassword" 
+            />
+          </nz-input-group>
+          <ng-template #suffixTemplateConfirm>
+            <span 
+              nz-icon 
+              [nzType]="passwordVisibleConfirm ? 'eye-invisible' : 'eye'" 
+              (click)="passwordVisibleConfirm = !passwordVisibleConfirm"
+              style="cursor: pointer;">
+            </span>
+          </ng-template>
+
+          <!-- Hiển thị thông báo lỗi validation real-time -->
+          <nz-alert 
+            *ngIf="passwordValidationMessage" 
+            [nzType]="passwordValidationType" 
+            [nzMessage]="passwordValidationMessage" 
+            nzShowIcon
+            style="margin-top: 12px;"
+          ></nz-alert>
+        </div>
+
+
+         <nz-space style="
+            padding: 10px 20px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: end;
+          ">
+          <button (click)="changePasswordSubmit()" *nzSpaceItem nz-button nzType="primary" class="btn-green" [nzLoading]="isChangingPassword">
+            <nz-icon nzType="save" nzTheme="outline" /> Đổi mật khẩu
+          </button>
+          <button 
+              *nzSpaceItem 
+              nz-button 
+              nzType="default" 
+              (click)="cancelChangePassword()"
+            >
+              <nz-icon nzType="reload" nzTheme="outline" /> Reset
+          </button>
+        </nz-space>
+      </nz-tab>
+    </nz-tabs>
+  </ng-container>
+
+</nz-modal>
+
+<!-- #endregion-->

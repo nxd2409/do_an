@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <title>OnlyOffice Viewer</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      height: 100dvh;
+      overflow: hidden;
+    }
+
+    #placeholder {
+      width: 100%;
+      height: 100%;
+    }
+
+    #logo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: #F7F7F7;
+      padding: 8px 8px 0px 8px;
+      display: none;
+      z-index: 9999;
+    }
+
+    #loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #F7F7F7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9998;
+    }
+
+    #loading-overlay img {
+      width: 240px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="loading-overlay">
+    <img src="../img/d2s_logo.png" alt="Loading...">
+  </div>
+
+  <div id="placeholder"></div>
+  <div id="logo"><img src="../img/d2s_logo.png" style="width: 84px;"></div>
+
+  <script>
+    let editor = null;
+
+    const getFileType = (name) => {
+      const ext = name.split('.').pop().toLowerCase();
+      const types = {
+        word: ['doc', 'docx', 'pdf', 'txt', 'rtf'],
+        cell: ['xls', 'xlsx', 'csv'],
+        slide: ['ppt', 'pptx']
+      };
+      return Object.keys(types).find(k => types[k].includes(ext)) || 'word';
+    };
+
+    function loadScript(url, callback) {
+      if (window.DocsAPI) {
+        callback && callback();
+        return;
+      }
+
+      const s = document.createElement('script');
+      s.src = `${url}/web-apps/apps/api/documents/api.js?t=${Date.now()}`;
+      s.onload = () => callback && callback();
+      s.onerror = (err) => console.error('Không tải được script:', err);
+      document.head.appendChild(s);
+    }
+
+    window.addEventListener('message', async (e) => {
+      const { file, mode, environment, onlyOfficeUrl, account } = e.data;
+      if (!file) return;
+
+      try {
+        loadScript(onlyOfficeUrl, function () {
+
+          if (editor) editor.destroyEditor();
+
+          editor = new DocsAPI.DocEditor('placeholder', {
+            width: "100%",
+            height: "100%",
+            documentType: getFileType(file.fileName),
+            document: {
+              fileType: file.fileName.split('.').pop(),
+              key: `${file.id}`,
+              title: file.fileName,
+              url: `${environment}/File/Download/${file.id}`
+            },
+            editorConfig: {
+              mode: mode || 'view',
+              lang: 'en',
+              callbackUrl: mode === 'edit' ? `${environment}/OnlyOffice/CallbackOnlyOffice?fileId=${file.id}` : '',
+              user: { id: account?.userName, name: account?.fullName },
+              customization: {
+                compactToolbar: false,
+                toolbarNoTabs: false,
+                statusBar: true,
+                autosave: false,
+                forcesave: true,
+                comments: false,
+                showReviewChanges: false,
+                spellcheck: false,
+                hideRightMenu: true,
+                hideLeftMenu: true,
+                hideToolbar: false,
+                uiTheme: "theme-gray",
+              },
+              theme: {
+                type: "gray"
+              }
+            },
+            events: {
+              onAppReady: function () {
+                const overlay = document.getElementById('loading-overlay');
+                if (overlay) {
+                  overlay.style.display = 'none';
+                }
+                document.getElementById('logo').style.display = 'block';
+              },
+              onError: function (event) {
+                const overlay = document.getElementById('loading-overlay');
+                if (overlay) {
+                  overlay.style.display = 'none';
+                }
+                document.getElementById('logo').style.display = 'block';
+              }
+            }
+          });
+        });
+
+      } catch (err) {
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+
+</html>

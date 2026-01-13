@@ -1,0 +1,66 @@
+<div class="main-login">
+    <div class="login-container">
+        <div class="content-login">
+            <div class="header-login">
+                <div class="x-meet">xMeet</div>
+                <div class="name-system-login">QUẢN TRỊ HỆ THỐNG</div>
+            </div>
+
+            @if(visibleType == 0){
+            <form nz-form [formGroup]="validateForm" class="login-form" (ngSubmit)="loginByAccount()">
+                <nz-form-item style="margin-bottom: 12px !important;">
+                    <nz-form-control nzErrorTip="Vui lòng nhập tên đăng nhập!">
+                        <nz-input-group nzPrefixIcon="user" nzSize="large">
+                            <input type="text" nz-input formControlName="username" placeholder="Tên đăng nhập" />
+                        </nz-input-group>
+                    </nz-form-control>
+                </nz-form-item>
+
+                <nz-form-item style="margin-bottom: 12px !important;">
+                    <nz-form-control nzErrorTip="Vui lòng nhập mật khẩu!">
+                        <nz-input-group nzPrefixIcon="lock" nzSize="large">
+                            <input [type]="isPasswordVisible ? 'text' : 'password'" nz-input formControlName="password"
+                                placeholder="Mật khẩu" />
+                            <span nz-icon [nzType]="isPasswordVisible ? 'eye-invisible' : 'eye'" nzTheme="outline"
+                                nzSuffix (click)="togglePasswordVisibility()" class="password-toggle"></span>
+                        </nz-input-group>
+                    </nz-form-control>
+                </nz-form-item>
+
+                <div class="forgot">
+                    <label nz-checkbox><span>Ghi nhớ</span></label>
+                    <a class="login-form-forgot">Quên mật khẩu?</a>
+                </div>
+
+                <button nz-button class="btn-primary" [nzType]="'primary'" nzSize="large">
+                    <nz-icon nzType="key" nzTheme="outline" />Đăng nhập
+                </button>
+            </form>
+
+            <div class="divider">Hoặc đăng nhập bằng</div>
+
+            <button nz-button class="btn-secondary" [nzType]="'default'" nzSize="large" (click)="changeTypeLogin(1)">
+                <nz-icon nzType="scan" nzTheme="outline" /> Đăng nhập bằng Face ID
+            </button>
+            }
+
+            @if(visibleType == 1){
+            <div class="face-recognition-container">
+                <video #loginFaceVideo autoplay playsinline></video>
+                <div class="recognition-ring"></div>
+            </div>
+            <button nz-button class="btn-secondary" [nzType]="'default'" nzSize="large" (click)="changeTypeLogin(0)">
+                <nz-icon nzType="arrow-left" nzTheme="outline" /> Đăng nhập bằng tài khoản
+            </button>
+            }
+        </div>
+    </div>
+
+    <div class="footer-login">
+        <img src="img/d2s_logo.png" alt="D2S Logo" class="footer-logo">
+        <div class="copyright">
+            <span class="copyright-title">Copyright © 2025</span>
+            <a href="https://d2s.vn" target="_blank">Dynamic Software Solutions</a>
+        </div>
+    </div>
+</div>

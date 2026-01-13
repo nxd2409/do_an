@@ -1,0 +1,649 @@
+.x-meet {
+  font-size: 36px;
+  font-weight: 600;
+  margin: 12px 0px 0px 40px;
+}
+
+
+.search-meeting {
+  display: flex;
+  gap: 12px;
+  flex-flow: row;
+  margin: 0px 16px 24px 40px;
+  justify-content: space-between;
+
+  ::ng-deep .ant-segmented-item-label{
+        padding: 6px 18px;
+  }
+}
+
+.sidebar {
+  position: fixed;
+  width: 68px;
+  height: 100dvh;
+  padding-bottom: 24px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid #dedede;
+}
+
+.nav {
+  flex: 1;
+  align-content: center;
+}
+
+.nav-item,
+.nav-item-red {
+  width: 52px;
+  height: 52px;
+  margin: 4px 0;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s;
+  font-size: 20px;
+}
+
+.nav-item {
+  color: #666;
+}
+
+.nav-item-red {
+  color: #dc3545;
+}
+
+.nav-item:hover {
+  background: #e6f7ff;
+  color: #1890ff;
+}
+
+.nav-item:hover::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  width: 4px;
+  height: 32px;
+  background: #1890ff;
+  border-radius: 0 4px 4px 0;
+}
+
+.nav-item-red:hover {
+  background: #ffebe6;
+}
+
+.profile {
+  width: 36px;
+  height: 36px;
+  margin-top: 8px;
+  border-radius: 50%;
+  background: #1890ff;
+  color: #fff;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.profile:hover {
+  background: #096dd9;
+}
+
+.main-content {
+  margin-left: 68px;
+  height: 100dvh;
+}
+
+.card-calender {
+  border-left: 1px solid #dedede;
+  height: 100dvh;
+}
+
+.btn-meet {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 42px 8px 26px;
+}
+
+.search-input {
+  padding: 0 40px;
+  margin-bottom: 24px;
+}
+
+.dropdown-input {
+  background-color: white;
+  width: 584px;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+  padding: 12px 12px;
+}
+
+.tab-create {
+  padding: 0px 12px;
+  height: calc(100dvh - 138px);
+}
+
+.file-upload-area {
+  border: 2px dashed #d9d9d9;
+  border-radius: 2px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-bottom: 12px;
+  margin-top: 12px
+}
+
+.file-upload-area:hover {
+  border-color: #1890ff;
+  background: #f0f7ff;
+}
+
+.img-upload {
+  width: 36px;
+  margin-bottom: 12px;
+}
+
+.file-list {
+  padding: 0px 24px;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.file-item:last-child {
+  border-bottom: none;
+}
+
+.file-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.file-icon img {
+  width: 100%;
+  height: 100%;
+}
+
+.file-icon.document {
+  background: #667eea;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+}
+
+.file-info {
+  flex: 1;
+  cursor: pointer;
+}
+
+.file-name {
+  font-weight: 600;
+}
+
+.file-meta {
+  font-size: 13px;
+  color: #888;
+}
+
+.file-meta span {
+  margin-right: 16px;
+}
+
+.file-actions {
+  display: flex;
+  gap: 18px;
+  font-size: 16px;
+}
+
+.file-actions i {
+  cursor: pointer;
+}
+
+.list-meeting {
+  padding: 0px 12px 0px 40px;
+  height: calc(100dvh - 370px);
+  overflow: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none !important;
+  }
+}
+
+// ==================== ROOM DIAGRAM LAYOUT ====================
+.room-diagram-container {
+  display: flex;
+  gap: 16px;
+  height: calc(100dvh - 144px);
+}
+
+// BÊN TRÁI: Danh sách người tham dự (20%)
+.participants-sidebar {
+  flex: 0 0 20%;
+  background: #ffffff;
+  padding: 16px;
+  overflow-y: auto;
+  max-height: 100%;
+
+  .sidebar-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #262626;
+    margin: 0 0 16px 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .participants-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .participant-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    margin-bottom: 8px;
+    background: #fafafa;
+    border: 1px solid #e8e8e8;
+    border-radius: 2px;
+    transition: all 0.2s ease;
+    cursor: move;
+
+    &:hover {
+      background: #f0f7ff;
+      border-color: #91d5ff;
+    }
+
+    &[draggable="true"]:active {
+      cursor: grabbing;
+      opacity: 0.5;
+    }
+
+    .participant-info {
+      flex: 1;
+      min-width: 0;
+      pointer-events: none; // Không chặn drag event
+
+      .participant-name {
+        font-size: 14px;
+        font-weight: 500;
+        color: #262626;
+        margin-bottom: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .participant-title {
+        font-size: 12px;
+        color: #8c8c8c;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    button {
+      flex-shrink: 0;
+      margin-left: 8px;
+    }
+  }
+}
+
+// BÊN PHẢI: Canvas phòng họp (80%)
+.canvas-section {
+  flex: 0 0 80%;
+  display: flex;
+  flex-direction: column;
+
+  .canvas-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #262626;
+    margin: 0 0 12px 0;
+  }
+}
+
+.canvas-container-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.room-canvas {
+  position: relative;
+  background-size: 50px 50px;
+  cursor: default;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+// ==================== ROOM ITEMS ====================
+.room-item {
+  position: absolute;
+  user-select: none;
+  transition: all 0.3s ease; // ✅ Thêm transition mượt
+
+  .item-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    border-radius: 4px;
+    pointer-events: auto;
+    transition: all 0.3s ease; // ✅ Thêm transition
+
+   [nz-icon] {
+      font-size: 32px;   
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  // Bàn không tương tác
+   &.item-table {
+    pointer-events: none;
+
+    .item-content {
+      background: #F6AD55; // ✅ SỬA: Từ gradient → solid
+      border-radius: 2px;
+
+      [nz-icon] {
+        font-size: 32px;
+        color: #fff;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      }
+    }
+
+    &.style-rectangle .item-content {
+      border-radius: 8px;
+    }
+
+    &.style-round .item-content,
+    &.style-circle .item-content { // ✅ THÊM: circle
+      border-radius: 50% !important; // ✅ THÊM: !important
+    }
+
+    &.style-oval .item-content, // ✅ THÊM: oval
+    &.style-ellipse .item-content {
+      border-radius: 50%;
+    }
+  }
+
+  // Ghế trống - có thể kéo thả
+  &.chair-available {
+    pointer-events: auto;
+    cursor: pointer;
+
+    .item-content {
+      background: #E2E8F0; // ✅ SỬA: Từ gradient xanh → xám
+      border-radius: 50%; // ✅ SỬA: Từ 6px → 50% (hình tròn)
+      border: none; // ✅ THÊM: Bỏ border
+
+      .chair-content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        [nz-icon] {
+          font-size: 24px; // ✅ SỬA: Từ 32px → 24px
+          color: #475569; // ✅ SỬA: Từ white → xám đậm
+          text-shadow: none; // ✅ THÊM: Bỏ shadow
+        }
+      }
+    }
+
+    // ✅ SỬA HOÀN TOÀN: Hover effect giống client
+    &:hover .item-content {
+      transform: scale(1.05); // ✅ SỬA: Từ 1.1 → 1.05
+      box-shadow: 0 4px 12px rgba(64, 169, 255, 0.35);
+      background: linear-gradient(135deg, #69c0ff 0%, #40a9ff 100%); // ✅ SỬA: Gradient xanh nhạt
+
+      [nz-icon] {
+        color: #fff; // ✅ THÊM: Icon chuyển trắng khi hover
+      }
+    }
+  }
+
+  // Ghế đã có người
+ &.chair-occupied {
+    pointer-events: auto;
+
+    .item-content {
+      border-radius: 50%; // ✅ SỬA: Từ 6px → 50%
+      background: transparent; // ✅ THÊM: Bỏ background gradient
+      border: none; // ✅ THÊM: Bỏ border
+
+      .chair-content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .assigned-person {
+          width: 100%; // ✅ THÊM
+          height: 100%; // ✅ THÊM
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+          cursor: move;
+          transition: all 0.3s ease;
+          border: 1px dashed #d9d9d9; // ✅ THÊM: Border dashed
+          border-radius: 50%; // ✅ THÊM
+
+          &:hover {
+            transform: scale(1.08); // ✅ THÊM
+            box-shadow: 0 4px 12px rgba(82, 196, 26, 0.4); // ✅ THÊM
+            border-color: #52c41a; // ✅ THÊM
+          }
+
+          nz-avatar {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); // ✅ THÊM
+            pointer-events: none; // ✅ THÊM
+          }
+
+          .remove-person-btn {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 20px; // ✅ SỬA: Từ 18px → 20px
+            height: 20px; // ✅ SỬA: Từ 18px → 20px
+            padding: 0;
+            border: none; // ✅ SỬA: Bỏ border white
+            border-radius: 50%;
+            background: #ff4d4f;
+            color: white;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15); // ✅ THÊM
+            transition: all 0.2s ease;
+            z-index: 10;
+
+            i {
+              font-size: 12px;
+              font-weight: bold; // ✅ THÊM
+              pointer-events: none;
+            }
+
+            &:hover {
+              background: #ff7875; // ✅ SỬA: Từ #cf1322 → #ff7875
+              transform: scale(1.1);
+            }
+          }
+
+          &:hover .remove-person-btn {
+            display: flex;
+          }
+        }
+      }
+    }
+  }
+
+  // ✅ Khi kéo GẦN ghế (highlight xanh lá sáng)
+  &.drag-nearby {
+    .item-content {
+      background: linear-gradient(135deg, #73d13d 0%, #52c41a 100%) !important;
+      border: 3px solid #52c41a !important;
+      transform: scale(1.12);
+      box-shadow: 0 0 25px rgba(82, 196, 26, 0.7);
+      animation: pulse-green 0.8s ease-in-out infinite;
+    }
+  }
+
+  // ✅ Khi kéo ĐÚP vào ghế (highlight vàng)
+  &.drag-over {
+    .item-content {
+      background: linear-gradient(135deg, #ffc53d 0%, #faad14 100%) !important;
+      border-color: #faad14 !important;
+      transform: scale(1.18);
+      box-shadow: 0 6px 20px rgba(250, 173, 20, 0.6);
+    }
+  }
+}
+
+// ✅ Animation phát sáng xanh lá
+@keyframes pulse-green {
+  0%, 100% {
+    box-shadow: 0 0 25px rgba(82, 196, 26, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 35px rgba(82, 196, 26, 1);
+  }
+}
+
+// ==================== CHAIR CONTENT ====================
+.chair-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.assigned-person {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab; // ✅ Thêm cursor khi có thể kéo
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  .remove-person-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #ff4d4f;
+    color: white;
+    border: 1px solid white;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-size: 12px;
+    z-index: 10;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #cf1322;
+      transform: scale(1.1);
+    }
+
+    i {
+      pointer-events: none;
+    }
+  }
+
+  &:hover .remove-person-btn {
+    display: flex;
+  }
+}
+
+// ==================== RESPONSIVE ====================
+@media (max-width: 1200px) {
+  .room-diagram-container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .participants-sidebar {
+    flex: 0 0 auto;
+    max-height: 200px;
+  }
+
+  .canvas-section {
+    flex: 0 0 auto;
+  }
+
+  .canvas-container-wrapper {
+    max-height: 400px;
+  }
+}
+
+// ==================== vote ====================
+
+.file-upload-area-vote {
+  justify-content: center;
+    border: 1px dashed #d9d9d9;
+    border-radius: 2px;
+    padding: 7px 20px;
+    display: flex;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin: 6px 0;
+}
+h4 {
+    margin-bottom: 0px;
+}
+.file-list-vote{
+    padding: 0px 15px;
+}
+
+.event-indicator {
+  height: 4px;
+  width: 4px;
+  margin: 6px 4px 2px 10px;
+  background: #FF4D4F;
+  border-radius: 50%;
+}
+.disabled-member {
+  opacity: 0.6;
+  pointer-events: none;
+  background-color: #f5f5f5;
+}

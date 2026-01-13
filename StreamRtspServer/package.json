@@ -1,0 +1,16 @@
+{
+  "name": "nms-main",
+  "version": "1.0.0",
+  "description": "Local streaming service over the router, using node and ffmpeg",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "node-media-server": "^2.5.0"
+  }
+}

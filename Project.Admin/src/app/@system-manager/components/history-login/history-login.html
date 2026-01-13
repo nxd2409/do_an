@@ -1,0 +1,74 @@
+<nz-page-header nzBackIcon>
+    <nz-page-header-title>Lịch sử đăng nhập</nz-page-header-title>
+    <nz-page-header-subtitle>Danh sách lịch sử đăng nhập</nz-page-header-subtitle>
+    <nz-page-header-extra>
+        <nz-space>
+            <input *nzSpaceItem nz-input placeholder="Tìm kiếm nhanh" [(ngModel)]="filter.keyWord" (keydown.enter)="search()"/>
+
+            <button *nzSpaceItem nz-button (click)="reset()">
+                <nz-icon nzType="sync" nzTheme="outline" />
+            </button>
+
+            <button *nzSpaceItem nz-button (click)="search()">
+                <nz-icon nzType="search" nzTheme="outline" />
+            </button>
+
+            <button *nzSpaceItem nz-button nzType="primary" nzDanger (click)="delHistory()">
+                <nz-icon nzType="delete" nzTheme="outline" />Xoá lịch sử
+            </button>
+        </nz-space>
+    </nz-page-header-extra>
+    <nz-page-header-content>
+        <nz-table #list nzBordered [nzData]="data.data" nzSize="small" [nzFrontPagination]="false"
+            [nzScroll]="{ y: 'calc(100vh - 226px)' }">
+            <thead>
+                <tr>
+                    <th nzWidth="40px" [nzChecked]="checked" [nzIndeterminate]="indeterminate"
+                        (nzCheckedChange)="onAllChecked($event)"></th>
+                    <th>Tài khoản</th>
+                    <th nzAlign="center">Thời gian</th>
+                    <th nzAlign="center" nzWidth="100px">Trình duyệt</th>
+                    <th nzAlign="center" nzWidth="100px">Phiên bản</th>
+                    <th nzAlign="center" nzWidth="80px">
+                        <nz-icon nzType="mobile" nzTheme="outline" /> / <nz-icon nzType="laptop" nzTheme="outline" />
+                    </th>
+                    <th nzAlign="center">OS</th>
+                    <th nzAlign="center">Model</th>
+                    <th>Địa chỉ IP</th>
+                    <th nzAlign="center"> Trạng thái</th>
+                    <th>Lý do thất bại</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of list.data; trackBy: trackById">
+                    <td [nzChecked]="setOfCheckedId.has(item.id)" (nzCheckedChange)="onItemChecked(item.id, $event)">
+                    </td>
+                    <td>{{ item.userName }}</td>
+                    <td nzAlign="center">{{ item.logonTime | date: 'dd/MM/yyyy HH:mm' }}</td>
+                    <td nzAlign="center">{{ item.browser }}</td>
+                    <td nzAlign="center">{{ item.version }}</td>
+                    <td nzAlign="center">
+                        <nz-icon [nzType]="item.isMobile ? 'mobile' : 'laptop'" nzTheme="outline" />
+                    </td>
+                    <td nzAlign="center">{{ item.os }}</td>
+                    <td nzAlign="center">{{ item.mobileModel }}</td>
+                    <td>{{ item.ipAddress }}</td>
+                    <td nzAlign="center">
+                        <nz-tag [nzColor]="item.status ? 'success' : 'error'">
+                            <nz-icon [nzType]="item.status ? 'check-circle' : 'close-circle'" />
+                            <span>{{item.status ? 'Thành công' : 'Thất bại'}}</span>
+                        </nz-tag>
+                    </td>
+                    <td>{{ item.reason }}</td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </nz-page-header-content>
+</nz-page-header>
+<div class="paging-container">
+    <div>Tổng {{data.totalRecord}} bản ghi</div>
+    <nz-pagination [nzPageIndex]="data.currentPage" [nzTotal]="data.totalRecord" nzShowSizeChanger
+        [nzPageSize]="data.pageSize" nzShowQuickJumper (nzPageIndexChange)="pageIndexChange($event)"
+        (nzPageSizeChange)="pageSizeChange($event)">
+    </nz-pagination>
+</div>

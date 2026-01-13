@@ -1,0 +1,21 @@
+.org-container{
+    height: calc(100vh - 116px);
+    overflow: auto;
+}
+
+.item-org {
+    display: flex;
+    align-items: center;
+    padding: 2px 6px 4px 2px;
+}
+
+.info-org{
+    padding-right: 16px;
+}
+
+.switch-item{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 4px 0 10px 4px;
+}

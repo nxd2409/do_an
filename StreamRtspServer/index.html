@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script src="https://cdn.bootcss.com/flv.js/1.5.0/flv.min.js"></script>
+  <video id="stream_01" autoplay width="50%" muted></video>
+  <script>
+    var config = {
+        enableStashBuffer: false,
+        autoCleanupSourceBuffer: true,
+        stashInitialSize: 128, 
+        seekType: 'range',
+        lazyLoad: true, 
+        lazyLoadMaxDuration: 3, 
+        lazyLoadRecoverDuration: 2,
+      };
+    if (flvjs.isSupported()) {
+      var stream_01 = document.getElementById('stream_01');
+      var flvPlayer_01 = flvjs.createPlayer({
+        type: 'flv',
+        url: 'ws://localhost:6868/live/stream_01.flv',
+        isLive: true,
+        hasAudio: false,
+      }, config);
+      flvPlayer_01.attachMediaElement(stream_01);
+      flvPlayer_01.load();
+      flvPlayer_01.play();
+    }
+  </script>
+</body>
+
+</html>

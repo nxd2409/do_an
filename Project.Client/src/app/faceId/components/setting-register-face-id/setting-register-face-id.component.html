@@ -1,0 +1,131 @@
+<app-setting-introduction-register-face-id *ngIf="stepFaceId == 1" (onClickNextStep)="getStepFaceId($event)" (onCancelRegisterFace)="onClickCancelRegister()"/>
+
+<ng-container *ngIf="stepFaceId == 2">
+<div class="d-flex justify-content-between mb-1">
+  <p class="mb-0 text-color-black fw-500 fs-14">Tiến trình</p>
+  <p class="mb-0 text-color-black fw-500 fs-14">
+    {{ currentStep*20 }}%
+  </p>
+</div>
+
+<div class="d-flex align-items-center h-20px w-100 mb-5">
+  <div  [ngClass]="currentStep >= 1 ? 'process-active process-animation' : 'process-unactive'" class="w-20 h-20px process-border-left"></div>
+  <div  [ngClass]="currentStep >= 2 ? 'process-active process-animation' : 'process-unactive'" class="w-20 h-20px"></div>
+  <div  [ngClass]="currentStep >= 3 ? 'process-active process-animation' : 'process-unactive'" class="w-20 h-20px"></div>
+  <div  [ngClass]="currentStep >= 4 ? 'process-active process-animation' : 'process-unactive'" class="w-20 h-20px"></div>
+  <div  [ngClass]="currentStep >= 5 ? 'process-active process-animation' : 'process-unactive'" class="w-20 h-20px process-border-right"></div>
+</div>
+
+<div class="d-flex align-items-center justify-content-center">
+    <p [ngClass]="currentStep >= 1 ? 'process-bg-color-active' : 'bg-color-step-custom'" 
+      class="me-4 min-w-50px min-h-50px border-radius-50 mb-0 d-flex justify-content-center align-items-center">
+      <ng-container *ngIf="currentStep >= 1, else noDataStep1">
+        <nz-icon nzType="check" nzTheme="outline"/>
+      </ng-container>  
+        <ng-template #noDataStep1>
+          <span>1</span>
+        </ng-template>
+    </p>
+    <p [ngClass]="currentStep >= 2 ? 'process-bg-color-active' : 'bg-color-step-custom'" 
+    class="me-4 min-w-50px min-h-50px border-radius-50 mb-0 d-flex justify-content-center align-items-center">
+      <ng-container *ngIf="currentStep >= 2, else noDataStep2">
+        <nz-icon nzType="check" nzTheme="outline"/>
+      </ng-container>  
+        <ng-template #noDataStep2>
+          <span>2</span>
+        </ng-template>
+    </p>
+    <p [ngClass]="currentStep >= 3 ? 'process-bg-color-active' : 'bg-color-step-custom'" 
+    class="me-4 min-w-50px min-h-50px border-radius-50 mb-0 d-flex justify-content-center align-items-center">
+      <ng-container *ngIf="currentStep >= 3, else noDataStep3">
+        <nz-icon nzType="check" nzTheme="outline"/>
+      </ng-container>  
+        <ng-template #noDataStep3>
+          <span>3</span>
+        </ng-template>
+    </p>
+    <p [ngClass]="currentStep >= 4 ? 'process-bg-color-active' : 'bg-color-step-custom'" 
+    class="me-4 min-w-50px min-h-50px border-radius-50 mb-0 d-flex justify-content-center align-items-center">
+      <ng-container *ngIf="currentStep >= 4, else noDataStep4">
+        <nz-icon nzType="check" nzTheme="outline"/>
+      </ng-container>  
+        <ng-template #noDataStep4>
+          <span>4</span>
+        </ng-template>
+    </p>
+    <p [ngClass]="currentStep >= 5 ? 'process-bg-color-active' : 'bg-color-step-custom'" 
+    class="me-4 min-w-50px min-h-50px border-radius-50 mb-0 d-flex justify-content-center align-items-center">
+      <ng-container *ngIf="currentStep >= 5, else noDataStep5">
+        <nz-icon nzType="check" nzTheme="outline"/>
+      </ng-container>  
+        <ng-template #noDataStep5>
+          <span>5</span>
+        </ng-template>
+    </p>
+</div>
+
+<div class="camera-wrapper position-relative" *ngIf="cameraPermission === 'granted'; else askPermission">
+  <div class="camera-box">
+      <webcam 
+          [trigger]="triggerObservable"
+          [width]="440" 
+          [height]="330" 
+          (imageCapture)="handleImage($event)">
+      </webcam>
+  </div>
+
+  <div class="overlay-text text-center">{{ instructionsData[currentStep].label }}</div>
+  
+  <div class="countdown-overlay" *ngIf="showCountdown && currentStep < 5">
+    <div class="countdown-number">{{ countdown }}</div>
+  </div>
+
+  <div class="show-msg-error" *ngIf="showErrMsg">{{ showErrMsg }}</div>
+  
+  <div class="camera-instruction">
+      <p class="text-center">{{ instructionsData[currentStep].label }}</p>
+  </div>
+
+  <div class="camera-controls w-100" *ngIf="currentStep < 5">
+    <button class="btn-cancel text-color-grey-light fw-500 cursor-pointer bg-color-white w-100 border-radius-2px" (click)="onClickCancelRegister()">Hủy</button>
+  </div>
+
+  <div class="camera-controls w-100" *ngIf="currentStep >= 5">
+    <button class="btn-cancel text-color-grey-light fw-500 cursor-pointer bg-color-white w-50 me-2 border-radius-2px" (click)="onClickCancelRegister()">Hủy</button>
+    <button class="btn-capture bg-color-bright-blue w-50 ms-2" 
+    [disabled]="isLoading"
+    [class.loading]="isLoading"
+    (click)="onSubmit()">
+      <span *ngIf="!isLoading">Cập nhật</span>
+      <div class="d-flex align-items-center justify-content-center" *ngIf="isLoading">
+        <span class="spinner"></span>
+        <span class="ps-2" style="padding-bottom: 3px">Đang xử lý</span>
+      </div>
+    </button>
+  </div>
+
+  <div class="preview-list" *ngIf="capturedImages.length > 0">
+      <div class="preview-item w-145px position-relative" *ngFor="let img of capturedImages; let i = index">
+      <img [src]="img" [alt]="'Ảnh ' + (i+1)" (click)="imageSelect = img"/>
+          <p class="mb-0">{{ instructionsData[i].label }}</p>
+      </div>
+  </div>
+</div>
+
+<ng-template #askPermission>
+  <div *ngIf="cameraPermission === 'prompt'">
+    <p>Bạn cần cấp quyền camera để tiếp tục.</p>
+    <button (click)="askForCameraPermission()">Bật camera</button>
+  </div>
+
+  <div *ngIf="cameraPermission === 'denied'">
+    <p>Quyền camera đã bị chặn. Vui lòng mở lại trong cài đặt trình duyệt.</p>
+    <button (click)="askForCameraPermission()">Bật camera</button>
+  </div>
+
+  <div *ngIf="cameraPermission === 'unsupported'">
+    <p>Trình duyệt của bạn không hỗ trợ kiểm tra quyền camera.</p>
+    <button (click)="askForCameraPermission()">Thử bật camera</button>
+  </div>
+</ng-template>
+</ng-container>

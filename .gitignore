@@ -1,0 +1,99 @@
+############################
+# .NET / Visual Studio
+############################
+
+# Build results
+**/bin/
+**/obj/
+**/Debug/
+**/Release/
+**/x64/
+**/x86/
+**/build/
+**/out/
+
+# Visual Studio specific
+.vs/          
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+
+# Build artifacts
+*.dll
+*.exe
+*.pdb
+*.cache
+*.log
+*.vspscc
+*_i.c
+*_p.c
+*.ncb
+*.opensdf
+*.sdf
+*.dbmdl
+
+# Others
+*.db
+*.bak
+*.ldf
+
+############################
+# Angular / Node.js
+############################
+
+# Dependencies
+node_modules/
+bower_components/
+
+# Build output
+dist/
+tmp/
+temp/
+
+# Angular cache
+.angular/
+.angular/cache/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files (local/dev)
+src/environments/environment.local.ts
+src/environments/environment.*.local.ts
+
+############################
+# OS generated files
+############################
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+/Project.Api/bin
+/Project.Api/obj
+/Project.Core/obj
+/Project.Service/obj
+/Project.Core/bin
+/Project.Service/bin
+/.vs
+/.vs/Project
+/.vs/Project/v17
+/StreamRtspServer/media
+/Project.Client/ios/App/App/public
+/Project.Client/ios/App/App/public

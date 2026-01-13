@@ -1,0 +1,976 @@
+@use "sass:color";
+
+// ============= VARIABLES =============
+$primary-color: #378dd8;
+$secondary-color: #b47db4;
+$guest-btn-color: #3d3d3d;
+$success-color: #10b981;
+$text-gray: #605e5c;
+$border-gray: #e1dfdd;
+$bg-color: white;
+$tech-blue: #4fc3f7;
+
+$container-max-width: 400px;
+$mobile-padding: 16px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 24px;
+$spacing-xl: 36px;
+
+// ============= MIXINS =============
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// ============= MAIN CONTAINER =============
+.main-login {
+  background: linear-gradient(
+    135deg,
+    #1a237e 0%,
+    #283593 25%,
+    #3949ab 50%,
+    #1e3a8a 75%,
+    #1a237e 100%
+  );
+  height: 100dvh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px;
+  overflow: hidden;
+  position: relative;
+
+  @media (max-width: 480px) {
+    padding: 40px 16px $spacing-md;
+  }
+}
+
+// Floating Login Button
+.floating-login-btn {
+  position: fixed;
+  top: 32px;
+  right: 32px;
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  font-weight: 600;
+  height: 48px;
+  padding: 0 24px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  @media (max-width: 768px) {
+    top: 16px;
+    right: 16px;
+    height: 40px;
+    padding: 0 16px;
+    font-size: 14px;
+  }
+}
+
+// ============= TECH BACKGROUND =============
+.tech-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.geometric-elements {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+// Main hexagon with brain
+.main-hexagon {
+  position: absolute;
+  top: 20%;
+  right: 15%;
+  width: 300px;
+  height: 260px;
+  border: 3px solid $tech-blue;
+  clip-path: polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0 50%);
+  background: rgba(79, 195, 247, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: hexagonGlow 4s ease-in-out infinite;
+
+  @media (max-width: 1024px) {
+    width: 200px;
+    height: 170px;
+    top: 25%;
+    right: 10%;
+  }
+}
+
+.brain-circuit {
+  width: 180px;
+  height: 140px;
+  filter: drop-shadow(0 0 10px rgba(79, 195, 247, 0.5));
+
+  @media (max-width: 1024px) {
+    width: 120px;
+    height: 90px;
+  }
+}
+
+@keyframes hexagonGlow {
+  0%,
+  100% {
+    border-color: $tech-blue;
+    box-shadow: 0 0 20px rgba(79, 195, 247, 0.3);
+  }
+  50% {
+    border-color: #64b5f6;
+    box-shadow: 0 0 30px rgba(79, 195, 247, 0.6);
+  }
+}
+
+// Circuit lines
+.circuit-lines .line {
+  position: absolute;
+  background: linear-gradient(90deg, transparent, $tech-blue, transparent);
+  opacity: 0.6;
+}
+
+.line.horizontal {
+  height: 2px;
+  width: 100%;
+  animation: slideHorizontal 8s linear infinite;
+}
+
+.line.vertical {
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(180deg, transparent, $tech-blue, transparent);
+  animation: slideVertical 10s linear infinite;
+}
+
+.line-1 {
+  top: 10%;
+  animation-delay: 0s;
+}
+.line-2 {
+  top: 40%;
+  animation-delay: 2s;
+}
+.line-3 {
+  top: 70%;
+  animation-delay: 4s;
+}
+.line-4 {
+  left: 20%;
+  animation-delay: 1s;
+}
+.line-5 {
+  left: 80%;
+  animation-delay: 3s;
+}
+
+@keyframes slideHorizontal {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  10%,
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideVertical {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  10%,
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+// Connection nodes
+.connection-nodes .node {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 2px solid $tech-blue;
+  border-radius: 50%;
+  background: rgba(79, 195, 247, 0.3);
+  animation: nodePulse 2s ease-in-out infinite;
+}
+
+.node-1 {
+  top: 15%;
+  left: 25%;
+  animation-delay: 0s;
+}
+.node-2 {
+  top: 35%;
+  right: 30%;
+  animation-delay: 0.3s;
+}
+.node-3 {
+  bottom: 25%;
+  left: 15%;
+  animation-delay: 0.6s;
+}
+.node-4 {
+  bottom: 45%;
+  right: 40%;
+  animation-delay: 0.9s;
+}
+.node-5 {
+  top: 60%;
+  left: 70%;
+  animation-delay: 1.2s;
+}
+.node-6 {
+  top: 25%;
+  left: 50%;
+  animation-delay: 1.5s;
+}
+
+@keyframes nodePulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(79, 195, 247, 0.3);
+  }
+  50% {
+    transform: scale(1.3);
+    box-shadow: 0 0 20px rgba(79, 195, 247, 0.8);
+  }
+}
+
+// Gears
+.gears .gear {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border: 3px solid $tech-blue;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (max-width: 1024px) {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.gear-inner {
+  width: 20px;
+  height: 20px;
+  background: $tech-blue;
+  border-radius: 50%;
+  opacity: 0.7;
+
+  @media (max-width: 1024px) {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+.gear-1 {
+  top: 30%;
+  left: 10%;
+  animation: rotateClockwise 8s linear infinite;
+}
+
+.gear-2 {
+  bottom: 20%;
+  right: 15%;
+  animation: rotateCounterClockwise 6s linear infinite;
+}
+
+@keyframes rotateClockwise {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rotateCounterClockwise {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+// ============= LANDING CONTENT =============
+.landing-content {
+  position: fixed;
+  top: 56%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 80px; // Khoảng cách giữa 2 cột
+  max-width: 90vw;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); // Smooth transition
+
+  // Khi hiện form login
+  &.blur-mode {
+    opacity: 0.25;
+    filter: blur(8px);
+    transform: translate(-50%, -50%) scale(0.92);
+    pointer-events: none;
+  }
+}
+
+// Cột bên trái
+.introduce-featureBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 40px;
+}
+
+// Logo D2S và Copyright
+.d2s-branding {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+
+  .d2s-logo {
+    width: 200px;
+    height: auto;
+  }
+
+  .copyright-text {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 13px;
+    margin: 0;
+    text-align: center;
+  }
+}
+
+// Cột bên phải
+.landing-right-section {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+  min-width: 600px;
+}
+
+// Header Landing (logo + title)
+.header-landing {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  white-space: nowrap;
+  gap: 20px;
+
+  .title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    .logo {
+      width: 64px;
+      height: 64px;
+    }
+
+    .title-text {
+      color: #fff;
+      font-weight: 400;
+      font-size: 37px;
+      margin: 0;
+    }
+  }
+
+  .sub-title {
+    color: #fff;
+    font-size: 19px;
+    font-weight: 700;
+    margin: 0;
+  }
+}
+
+// Timeline Content
+.content-landing {
+  .item {
+    padding: 20px 16px;
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    gap: 12px;
+    opacity: 0;
+    animation: slideUp 0.8s ease forwards, floatItem 2s ease-in-out infinite;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+
+    .title-item {
+      color: #fff;
+      font-size: 20px;
+      font-weight: 600;
+      text-align: left;
+      margin: 0;
+    }
+
+    .sub-title-item {
+      color: rgba(255, 255, 255, 0.95);
+      font-size: 15px;
+      font-weight: 400;
+      text-align: left;
+      line-height: 1.6;
+      margin: 0;
+    }
+  }
+
+  ::ng-deep .ant-timeline-item {
+    &:nth-child(1) .item {
+      animation-delay: 0.5s;
+    }
+    &:nth-child(2) .item {
+      animation-delay: 1s;
+    }
+    &:nth-child(3) .item {
+      animation-delay: 1.5s;
+    }
+  }
+}
+
+// Styles cho các item theo màu
+.OnlineMeeting {
+  background: linear-gradient(135deg, #54a6f0 0%, #1dd2f0 100%);
+}
+
+.QuanLyVanBan {
+  background: linear-gradient(135deg, #d488e3 0%, #dc6086 100%);
+}
+
+.BieuQuyet {
+  background: linear-gradient(135deg, #a29fdc 0%, #8b7fc4 100%);
+}
+
+// Custom dot styles
+.custom-dot {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+// Timeline styles
+::ng-deep {
+  .ant-timeline-item-head.ant-timeline-item-head-blue.ant-timeline-item-head-custom {
+    background: none;
+  }
+
+  .ant-timeline-item-content {
+    top: -70px;
+    padding: 0px 25px 0px 20px;
+    margin-bottom: 0;
+  }
+
+  .ant-timeline-item-tail {
+    border-left: 3px solid rgba(29, 210, 240, 0.5);
+  }
+}
+
+// Animations
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes floatItem {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+// Feature Box
+.feature-box {
+  position: relative;
+  width: 300px;
+  height: 200px;
+  background: linear-gradient(to bottom right, #5a4bda, #7158e2);
+  border-radius: 2px;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  animation: slideUpFadeIn 2s ease-out;
+}
+
+.block {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.label {
+  position: absolute;
+  background: white;
+  color: #2b2b2b;
+  padding: 6px 12px;
+  border-radius: 2px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  animation: floatIn 1s forwards;
+  white-space: nowrap;
+}
+
+.label-top-left {
+  top: -20px;
+  left: -50px;
+  animation-delay: 0.5s;
+}
+.label-bottom-left {
+  bottom: -20px;
+  left: -50px;
+  animation-delay: 0.7s;
+}
+.label-bottom-right {
+  bottom: 50px;
+  right: -50px;
+  animation-delay: 0.9s;
+}
+
+@keyframes floatIn {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// Introduce Carousel
+.introduce {
+  backdrop-filter: blur(15px);
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(79, 195, 247, 0.3);
+  border-radius: 2px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  color: white;
+  text-align: center;
+  width: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 50px;
+  height: 305px;
+  animation: slideUpFadeIn 1s ease-out;
+}
+
+::ng-deep .introduce {
+  [nz-carousel-content] {
+    text-align: center;
+    background: transparent;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  max-width: 400px;
+  margin: 0 auto;
+
+  .title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .sub-title {
+    font-size: 18px;
+    font-weight: 400;
+    color: #fff;
+    text-align: justify;
+    line-height: 1.6;
+  }
+}
+
+@keyframes slideUpFadeIn {
+  0% {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// Title for Mobile/Tablet
+.titleMobileTablet {
+  display: none;
+}
+
+// ============= LOGIN CONTAINER =============
+.login-container {
+  width: 100%;
+  max-width: $container-max-width;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  opacity: 0;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &.show {
+    opacity: 1;
+  }
+
+  &::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;
+    z-index: -1;
+    opacity: 0;
+  }
+
+  &.show::before {
+    opacity: 1;
+  }
+}
+
+.content-login {
+  width: 100%;
+}
+
+// Header
+.header-login {
+  text-align: center;
+  margin-bottom: $spacing-lg;
+}
+
+.x-meet {
+  font-size: clamp(28px, 8vw, 36px);
+  font-weight: 600;
+  color: white;
+}
+
+// Form
+.login-form {
+  width: 100%;
+
+  nz-form-item {
+    margin-bottom: $spacing-md;
+  }
+}
+
+.forgot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+  font-size: 14px;
+
+  label {
+    font-weight: 600;
+    margin: 0;
+    color: white;
+  }
+}
+
+.login-form-forgot {
+  color: color.adjust($primary-color, $lightness: 20%);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.password-toggle {
+  cursor: pointer;
+}
+
+// Buttons
+.btn-primary,
+.btn-secondary,
+.btn-guest {
+  width: 100%;
+  margin-bottom: $spacing-md;
+}
+
+.btn-guest {
+  background-color: $guest-btn-color !important;
+  border-color: $guest-btn-color !important;
+}
+
+// Divider
+.divider {
+  @include flex-center;
+  margin: $spacing-lg 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+
+  &::before {
+    margin-right: 16px;
+  }
+
+  &::after {
+    margin-left: 16px;
+  }
+}
+
+// Face Recognition
+.face-recognition-container {
+  position: relative;
+  width: min(260px, 70vw);
+  height: min(260px, 70vw);
+  margin: $spacing-xl auto;
+
+  video {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    position: relative;
+    z-index: 1;
+    transform: scaleX(-1);
+  }
+}
+
+.recognition-ring {
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  z-index: 2;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px solid #dedede;
+    opacity: 0.3;
+  }
+}
+
+// Guest Container
+.guest-container {
+  width: 100%;
+}
+
+// Footer
+.footer-login {
+  @include flex-center;
+  flex-direction: column;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  position: relative;
+  z-index: 10;
+}
+
+.footer-logo {
+  width: min(160px, 40vw);
+  height: auto;
+}
+
+.copyright {
+  font-size: 13px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+
+  @media (min-width: 768px) {
+    font-size: 14px;
+  }
+
+  a {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.copyright-title {
+  color: rgba(255, 255, 255, 0.6);
+  margin-right: 4px;
+}
+
+// ============= RESPONSIVE =============
+
+@media (max-width: 1024px) {
+  .landing-content {
+    display: none !important; // Ẩn hoàn toàn trên mobile/tablet
+  }
+
+  .floating-login-btn {
+    display: none; // Ẩn nút floating trên mobile
+  }
+
+  .titleMobileTablet {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 16px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.5s ease, top 0.5s ease;
+    z-index: 5;
+
+    .logo {
+      width: 64px;
+      height: 64px;
+    }
+
+    .title-text {
+      white-space: nowrap;
+      font-size: 20px;
+      color: #fff;
+      margin: 10px 0 5px;
+    }
+
+    .sub-title {
+      color: #fff;
+      font-size: 16px;
+      margin: 0;
+    }
+
+    &.move-up {
+      top: 80px;
+      transform: translate(-50%, 0);
+    }
+  }
+
+  .login-container::before {
+    display: none; // Không cần backdrop trên mobile
+  }
+}
+
+@media (max-width: 576px) {
+  .titleMobileTablet .title-text {
+    font-size: 16px;
+    white-space: normal;
+  }
+
+  .forgot {
+    flex-direction: column;
+    gap: $spacing-sm;
+    align-items: flex-start;
+  }
+
+  .login-form-forgot {
+    align-self: flex-end;
+  }
+
+  .content-wrapper {
+    .title {
+      font-size: 18px;
+    }
+
+    .sub-title {
+      font-size: 14px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .main-login {
+    padding: 60px 40px $spacing-md;
+  }
+
+  .feature-box {
+    width: 250px;
+    height: 170px;
+  }
+
+  .introduce {
+    width: 90vw;
+    max-width: 400px;
+    padding: 20px 30px;
+    height: auto;
+    min-height: 250px;
+  }
+}
+
+.title {
+  text-align: center;
+  color: white;
+  font-size: 36px;
+  font-weight: 600;
+}

@@ -1,0 +1,94 @@
+<nz-page-header nzBackIcon>
+    <nz-page-header-title>DANH SÁCH QUYỀN</nz-page-header-title>
+    <nz-page-header-subtitle>Cấu hình quyền hệ thống</nz-page-header-subtitle>
+    <nz-page-header-extra>
+        <nz-space>
+            <input *nzSpaceItem nz-input placeholder="Tìm kiếm nhanh" [(ngModel)]="searchRight"
+                (ngModelChange)="onSearchChangeRight()">
+
+            <button *nzSpaceItem nz-button (click)="reset()">
+                <nz-icon nzType="sync" nzTheme="outline" />
+            </button>
+
+            <button *nzSpaceItem nz-button (click)="onSearchChangeRight()">
+                <nz-icon nzType="search" nzTheme="outline" />
+            </button>
+
+            <button *nzSpaceItem nz-button nzType="primary" class="btn-green" (click)="updateOrder()">
+                <nz-icon nzType="ordered-list" nzTheme="outline" /> Cập nhật thứ tự
+            </button>
+
+            <button *nzSpaceItem nz-button nzType="primary" (click)="create('RIGHT')">
+                <nz-icon nzType="plus" nzTheme="outline" /> Thêm mới
+            </button>
+        </nz-space>
+    </nz-page-header-extra>
+    <nz-page-header-content>
+        <div class="right-container">
+            <nz-tree #treeCom [nzData]="displayedRightTree" nzDraggable nzBlockNode nzExpandAll
+                [nzSearchValue]="searchRight" (nzSearchValueChange)="nzEvent($event)" [nzTreeTemplate]="nzTreeTemplate"
+                [nzExpandedIcon]="multiExpandedIconTpl" (nzOnDrop)="nzEvent($event)" (nzOnDragStart)="nzEvent($event)">
+                <ng-template #nzTreeTemplate let-node>
+                    <div class="item-right">
+                        <div (click)="detail(node.origin)">
+                            <nz-tag nzColor="default">{{node.origin.id}}</nz-tag>
+                            <span>{{ node.origin.name || node.title.split('_')[1] }}</span>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <nz-tag nzColor="processing" (click)="create(node.origin.id)">
+                                <nz-icon nzType="plus"></nz-icon>
+                            </nz-tag>
+                            <nz-tag nzColor="error" nz-popconfirm
+                                nzPopconfirmTitle="Bạn có chắc chắn muốn xoá right này?"
+                                (nzOnConfirm)="deleteRight(node.origin.id)">
+                                <nz-icon nzType="delete"></nz-icon>
+                            </nz-tag>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template #multiExpandedIconTpl let-node let-origin="origin">
+                    <span *ngIf="node.children.length > 0" nz-icon style="font-size: 10px"
+                        [nzType]="node.isExpanded ? 'caret-down' : 'caret-right'" nzTheme="outline"></span>
+                </ng-template>
+            </nz-tree>
+        </div>
+    </nz-page-header-content>
+</nz-page-header>
+
+<nz-drawer [nzWidth]="460" [nzClosable]="false" [nzVisible]="visible" nzPlacement="right" [nzMask]="!isEdit"
+    [nzExtra]="extra" [nzTitle]="isEdit ? 'CHỈNH SỬA' : 'TẠO MỚI'" (nzOnClose)="close()">
+    <ng-container *nzDrawerContent>
+
+
+        <label>Mã</label>
+        <input nz-input [(ngModel)]="dto.id" [disabled]="isEdit" class="space-control" />
+
+        <label>Mã cha</label>
+        <input nz-input [(ngModel)]="dto.pId" [disabled]="true" class="space-control" />
+
+        <label>Tên</label>
+        <input nz-input [(ngModel)]="dto.name" class="space-control" />
+
+        <div class="switch-item">
+            <nz-switch [(ngModel)]="dto.expanded"></nz-switch>
+            <label>Tự động mở quyền</label>
+        </div>
+
+        <nz-radio-group [(ngModel)]="dto.isActive">
+            <label nz-radio [nzValue]="true">Kích hoạt</label>
+            <label nz-radio [nzValue]="false">Khoá</label>
+        </nz-radio-group>
+
+    </ng-container>
+
+    <ng-template #extra>
+        <nz-space>
+            <button *nzSpaceItem nz-button nzType="primary" (click)="save()" class="btn-green">
+                <nz-icon nzType="save" nzTheme="outline" /> {{isEdit ? 'Cập nhật' : 'Lưu'}}
+            </button>
+            <button *nzSpaceItem nz-button nzType="primary" nzDanger (click)="close()">
+                <nz-icon nzType="close" nzTheme="outline" />
+            </button>
+        </nz-space>
+    </ng-template>
+</nz-drawer>
